@@ -29,31 +29,25 @@ else{
 };
 
 
-exports.login=async(req,res)=>{
-  const{email,password}=req.body
+exports.login = async (req, res) => {
+  const { email, password } = req.body;
   try {
-    const newPassword= md5(password)
-    console.log("new PASS",newPassword);
-    console.log("password",password);
-    const login='select * from users where email=? and password=?'
-    const loginEmail=await con.promise().query(login,[email,newPassword]);
-    console.log("sdfgdgdfhfdhgfjhjkerfe",loginEmail[0]);
-    if(!loginEmail[0][0]){
-      res.status(401);
-					res.send('email or password is incorrect');
-    }
-    else{
-    const id=loginEmail[0][0].userid
-    
-    const token=jwt.sign({id:id},secretKey,{ expiresIn: "3h" })
-    res.cookie("token", token, { httpOnly: true });
-    console.log("token", token);
-    res.json({ password,email });
+    const newPassword = md5(password);
+    const login = 'SELECT * FROM users WHERE email=? AND password=?';
+    const [loginResult] = await con.promise().query(login, [email, newPassword]);
+
+    if (!loginResult[0]) {
+      res.status(401).send('Email or password is incorrect');
+    } else {
+      const id = loginResult[0].userid;
+      const token = jwt.sign({ id: id }, secretKey, { expiresIn: "3h" });
+      res.cookie("token", token, { httpOnly: true, sameSite: "none", secure: true });
+      res.json({ email,password, token });
     }
   } catch (error) {
     res.json({ error: error.message });
   }
-}
+};
 
 
 

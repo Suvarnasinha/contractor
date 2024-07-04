@@ -1,13 +1,12 @@
-// middlewares/auth.js
-
 const jwt = require('jsonwebtoken');
-const { jwtSecret } = require('../config/config');
+require('dotenv').config();
+const secretKey = process.env.SECRET_KEY;
 
-const authenticateJWT = (req, res, next) => {
+exports.authenticate = (req, res, next) => {
   const token = req.cookies.token;
 
   if (token) {
-    jwt.verify(token, jwtSecret, (err, decoded) => {
+    jwt.verify(token, secretKey, (err, decoded) => {
       if (err) {
         return res.sendStatus(403);
       }
@@ -18,5 +17,3 @@ const authenticateJWT = (req, res, next) => {
     res.sendStatus(401);
   }
 };
-
-module.exports = authenticateJWT;
