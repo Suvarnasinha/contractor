@@ -3,39 +3,49 @@
     <h1>Properties</h1>
     <div v-if="properties.length === 0">No properties available</div>
     <div v-else>
-      <div v-for="property in properties" :key="property.propertyid">
-        <v-card>
+     
+          <v-row>
+            <v-col v-for="property in properties" :key="property.propertyid" cols="12" md="4" class="d-flex">
+              <v-card class="mx-auto">
+       
           <v-card-title>{{ property.name }}</v-card-title>
           <v-card-subtitle>{{ property.address }}</v-card-subtitle>
-          <v-card-text>{{ property.description }}</v-card-text>
-          <v-btn @click="showEstimates(property.propertyid)">Show Estimates</v-btn>
+          <v-card-text>{{ property.description }}-----{{ property.workid }}</v-card-text>
+
+          <v-btn @click="showEstimate(property.workid)">Show Estimate</v-btn>
         </v-card>
-      </div>
+      </v-col>
+    </v-row>
+     
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { onMounted, computed } from 'vue';
 import { useStore } from 'vuex';
 import { useRouter } from 'vue-router';
 
 const store = useStore();
 const router = useRouter();
-const properties = ref([]);
+// const properties = ref([]);
 
-const fetchProperties = async () => {
-  await store.dispatch('fetchProperties');
+const fetchContProperties = async () => {
+  await store.dispatch('fetchContProperties');
 };
 
-onMounted(fetchProperties);
+onMounted(fetchContProperties);
 
-const properties = computed(() => store.state.properties);
+const properties = computed(() =>  {
+  console.log("store.state.contractor.property:::",store.state.contractor.property);
+  return store.state.contractor.property
+});
+console.log("object",properties.value);
 
-const showEstimates = (propertyId) => {
+const showEstimate = (workId) => {
   router.push({
-    name: 'Estimates',
-    params: { propertyId }
+    name: 'estimateShow',
+    params: { workId }
   });
 };
 

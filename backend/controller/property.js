@@ -3,9 +3,10 @@ const con = require("../config/config");
 exports.addProperty = async (req, res) => {
   const { name, address, description } = req.body;
   const userid = req.userid;
-
+  console.log("dfskuchfidsik",req.body)
+  console.log(userid)
   try {
-    const addProperty = `INSERT INTO property (name, address, description, userid,accept) VALUES (?, ?, ?, ?)`;
+    const addProperty = `INSERT INTO property (name, address, description, userid) VALUES (?, ?, ?, ?)`;
     let addPropertyData =await con.promise().query(addProperty,[name, address, description, userid]);
     console.log("userid",userid);
     console.log("object",addPropertyData[0].insertId);
@@ -19,47 +20,54 @@ exports.addProperty = async (req, res) => {
 exports.showAllProperty=async(req,res)=>{
   const userid = req.userid;
 try {
-  const propertiesQuery = 'SELECT * FROM properties WHERE userid = ?';
-  const [properties] = await con.promise().query(propertiesQuery, [userid]);
-  res.json(properties);
+  const [rows] = await con.promise().query('SELECT * FROM property WHERE userid = ?', [userid]);
+
+  res.json(rows);
 } catch (error) {
   res.json({ error: error.message });
 }
 }
 
-exports.addWork = async (req, res) => {
-  const propertyId = req.params.propertyid;
-  const descriptions = req.body.description;
-  const images = req.files;
 
-  try {
-    const addWorkQuery = `INSERT INTO work (propertyid, complete, accept) VALUES (?, ?, ?)`;
-    const [workResult] = await con.promise().query(addWorkQuery, [propertyId, 0, 0]);
+// exports.addWork = async (req, res) => {
+//   const propertyId = req.params.propertyid;
+//   // console.log(propertyId);
+//   const { description } = req.body;
+//   // console.log(description);
+//   const images = req.files;
+// // console.log("images",images);
+//   try {
+// console.log("hello")
+//     const addWorkQuery = `INSERT INTO property_contractor.work (propertyid, complete,accept) VALUES (?, ?,?)`;
+//     const [workResult] = await con.promise().query(addWorkQuery, [propertyId, 0,0]);
     
-    const workId = workResult.insertId;
-
-    for (let i = 0; i < descriptions.length; i++) {
-      const addWorkDetailQuery = `INSERT INTO workdetail (workid, description) VALUES (?, ?)`;
-      const [workDetailResult] = await con.promise().query(addWorkDetailQuery, [workId, descriptions[i]]);
+// // console.log("workdata",workResult.insertId);
+// console.log("workdata2",workResult);
+//     const workId = workResult.insertId;
+// // console.log("WORKID",workId);
+// const addWorkDetailQuery = `INSERT INTO workdeatil (workid, description) VALUES (?, ?)`;
+// const [workDetailResult] = await con.promise().query(addWorkDetailQuery, [workId, description]);
+// const workDetailId = workDetailResult.insertId;
+// // console.log("workDetailId",workDetailId);
+//     const addWorkImagesQuery = `INSERT INTO workimage (workdetailid, image) VALUES (?, ?)`;
+//     for (let file of images) {
+//       const [workDetailImage]=  await con.promise().query(addWorkImagesQuery, [workDetailId, file.path]);
+//       // res.json({workDetailImage})
+//       console.log("efgieugiugrigufiurgfrigfigrigifgifgigifgirfgri",workDetailImage)
+//     }
+// console.log(description);
+//     res.json({
+//       message: 'Work added successfully',
+//       work: {
+//         workId,
+//         description,
       
-      const workDetailId = workDetailResult.insertId;
-
-      const addWorkImagesQuery = `INSERT INTO workimage (workdetailid, image) VALUES (?, ?)`;
-      await con.promise().query(addWorkImagesQuery, [workDetailId, images[i].path]);
-    }
-
-    res.json({
-      message: 'Work added successfully',
-      work: {
-        workId,
-        descriptions,
-        images: images.map(image => image.path)
-      }
-    });
-  } catch (error) {
-    res.json({ error: error.message });
-  }
-};
+//       }
+//     });
+//   } catch (error) {
+//     res.json({ error: error.message });
+//   }
+// };
 
 
 exports.getEstimate=async(req,res)=>{
@@ -75,53 +83,86 @@ exports.getEstimate=async(req,res)=>{
 }
 
 
-exports.selectContractor=async(req,res)=>{
-  
-}
 
-
-
-
-
-// Update estimate status (accept or reject)
-exports.updateEstimateStatus = async (req, res) => {
+ exports.updateEstimateStatus = async (req, res) => {
   const { contractorworkid, status } = req.body;
-  const contractorid = req.userid; // Assuming userid is set in authentication middleware
+  const contractorid = req.userid; 
 
   try {
-    if (status === 'rejected') {
-      // Delete the rejected estimate
-      const deleteQuery = `
-        DELETE FROM contractorwork
-        WHERE contractorworkid = ?
-      `;
-      await con.execute(deleteQuery, [contractorworkid]);
-    } else if (status === 'accepted') {
-      const getWorkIdQuery = `
-        SELECT cw.workid
-        FROM contractorwork cw
-        WHERE cw.contractorworkid = ?
-      `;
-      const [rows] = await con.promise().query(getWorkIdQuery, [contractorworkid]);
-      const workId = rows[0].workid;
+    if(status === 'accepted'){
+      const deletetheremainingcon= `delete from contractorwork where contractworkid!=?`;
+      await con.promise().query(deletetheremainingcon, [contractorworkid]);
 
-      // Update the status to 'accepted'
-      const updateQuery = `
-        UPDATE contractorwork
-        SET accept = ?
-        WHERE workid = ? AND contractorworkid != ?
-      `;
-      await con.execute(updateQuery, ['rejected', workId, contractorworkid]);
+      const insertintoworkcontrator = `insert into workcontractor (workid,contractorid)value(?,?)`;
+      await con.promise().query(insertintoworkcontrator, [workId, contractorworkid]);
+    
+    
+    const selecttheworkid=`select workid from contractwork where contractworkid=?`;
+    const [rows]=await con.promise().query(selecttheworkid,[contractorworkid])
+    const workId = rows[0].workid;
 
-      // Insert into workcontractor
-      const insertQuery = `
-        INSERT INTO workcontractor (workid, contactorid)
-        VALUES (?, ?)
-      `;
-      await con.execute(insertQuery, [workId, contractorid]);
+    const insertintowork ='update work set accept=? where workid=?';
+    await con.promise().query(insertintowork, [1, workId]);
+
+
+    res.json(contractorworkid)
+    }else{
+      res.json({message:error})
     }
-    res.json({ message: 'Estimate status updated successfully' });
   } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+
+
+exports.addWork = async (req, res) => {
+  const propertyId = req.params.propertyid;
+  const { descriptions } = req.body;
+  const images = req.files;
+
+  if (!Array.isArray(descriptions)) {
+    return res.status(400).json({ error: 'Descriptions must be an array' });
+  }
+
+  try {
+    console.log("Inserting work entry for property:", propertyId);
+    const addWorkQuery = `INSERT INTO property_contractor.work (propertyid, complete) VALUES (?, ?)`;
+    const [workResult] = await con.promise().query(addWorkQuery, [propertyId, 0]);
+
+    const workId = workResult.insertId;
+    console.log("Work entry inserted with ID:", workId);
+
+    for (let i = 0; i < descriptions.length; i++) {
+      const description = descriptions[i];
+      console.log("Inserting work detail entry for work ID:", workId, "Description:", description);
+      const addWorkDetailQuery = `INSERT INTO workdeatil (workid, description) VALUES (?, ?)`;
+      const [workDetailResult] = await con.promise().query(addWorkDetailQuery, [workId, description]);
+      const workDetailId = workDetailResult.insertId;
+      console.log("Inserted work detail with ID:", workDetailId);
+
+      // Insert images corresponding to the current description
+      if (images && images.length > 0) {
+        for (let j = 0; j < images.length; j++) {
+          const file = images[j];
+          console.log(file)
+          console.log("Inserting image entry for work detail ID:", workDetailId, "File path:", file.path);
+          const addWorkImagesQuery = `INSERT INTO workimage (workdetailid, image) VALUES (?, ?)`;
+          await con.promise().query(addWorkImagesQuery, [workDetailId, file.path]);
+          console.log("Inserted image successfully.");
+        }
+      }
+    }
+
+    res.json({
+      message: 'Work added successfully',
+      work: {
+        workId,
+        descriptions,
+      },
+    });
+  } catch (error) {
+    console.error("Error adding work:", error.message);
     res.status(500).json({ error: error.message });
   }
 };

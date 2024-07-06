@@ -23,7 +23,6 @@ import { useStore } from 'vuex';
 const store = useStore();
 
 const properties = computed(() =>{
-  // console.log("object",store.state.property);
  return store.state.property.property
 });
 console.log(properties.value);

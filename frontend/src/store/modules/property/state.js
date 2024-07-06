@@ -1,4 +1,5 @@
 export const state={
    name:"",
-   property:""
+   property:"",
+   showdata:""
 }

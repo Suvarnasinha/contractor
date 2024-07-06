@@ -5,12 +5,21 @@ import forgetPassword from './components/forgetPassword.vue'
 import propertywork from './components/propertywork.vue'
 import propertyDisplay from './components/propertyDisplay.vue'
 import showProperty from './components/showProperty.vue'
-import properrtylist from './component/properrtylist.vue';
-import estimate from './component/estimate.vue';
+import propertyContList from './components/propertyContList.vue'
+import estimateForm from './components/estimateForm.vue'
+import propertyShowEstimate from './components/propertyShowEstimate.vue'
+import estimateShow from './components/estimateShow.vue'
+import registration from './components/registration.vue'
+
 const routes = [
   {
-    name:'Login',
+    name:'Registration',
     path: '/',
+    component: registration,
+  },
+  {
+    name:'Login',
+    path: '/login',
     component: Login,
   },
   {
@@ -34,20 +43,36 @@ const routes = [
     component:showProperty,
   },
   {
+    name:'propertyContList',
+    path:'/propertylist',
+    component:propertyContList,
+  },
+  {
+    name:'estimateForm',
+    path:'/estimateForm',
+    component:estimateForm,
+  },
+  {
+    name:'propertyShowEstimate',
+    path:'/propertyShowEstimate',
+    component:propertyShowEstimate,
+  },
+  {
+    name:'estimateShow',
+    path:'/estimateshow',
+    component:estimateShow,
+  },
+  // {
+  //   name:'propertyShowEstimate',
+  //   path:'/propertyShowEstimate',
+  //   component:propertyShowEstimate,
+  // },
+  {
     name:'pagenotfound',
     path:'/:pathMatch(.*)*',
     component:PageNotFound
-  },
-  {
-    path: '/propertylist',
-    name: 'PropertyList',
-    component: properrtylist
-  },
-  {
-    path: '/estimate/:propertyId',
-    name: 'EstimateForm',
-    component: estimate
   }
+
 ];
 
 export const router = createRouter({
@@ -55,4 +80,20 @@ export const router = createRouter({
   routes,
 })
 
+// router.beforeEach((to, from, next) => {
+//   if (to.name == 'Login'){
+//    next();
+//   }
+
+// else{
+//   if(store.getters.getToken){
+//     console.log("token has been set ")
+//     next()
+//   }
+//   else{
+//     console.log("go to login");
+//     next({ path: '/'})
+//   }
+// }
+// })  
 

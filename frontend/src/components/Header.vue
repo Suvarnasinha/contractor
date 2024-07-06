@@ -1,21 +1,24 @@
 <template>
   <v-app>
     <v-app-bar app>
-      <v-toolbar-title>Shopping Web</v-toolbar-title>
+      <v-toolbar-title>ProCon</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-btn text to="/">
+        Registration
+      </v-btn>
+      <v-btn text to="/login">
         Login
       </v-btn>
       <v-btn text to="/forgetPassword">
         FORGET Password
       </v-btn>
-      <v-btn text to="/propertyWork">
-        Category
+      <v-btn text to="/propertylist">
+        propertylist
       </v-btn>
       <v-btn text to="/addproperty">
         addproperty
       </v-btn>
-      <v-btn text to="">
+      <v-btn text to="/propertyShowEstimate">
         User
       </v-btn>
     </v-app-bar>
