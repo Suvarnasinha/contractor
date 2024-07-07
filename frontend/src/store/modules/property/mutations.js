@@ -10,6 +10,22 @@ export const mutations={
   SET_PROPERTYWORK(state,property){
     state.property=property;
     console.log("the mutation data for the property work",state.property)
-  }
+  },
+  SHOW_ESTIMATE(state,estimate){
+    state.estimate=estimate;
+    console.log("the mutation data for ESTIMATE",state.estimate)
+  },
+  SHOW_PROPERTY_ESTIMATE(state,estimateProperty){
+    state.estimateProperty=estimateProperty;
+    console.log("the mutation data for estimateProperty",state.estimateProperty)
+  },
 
+  UPDATE_ESTIMATE_STATUS(state, status) {
+    state.updateStatus = status;
+    console.log("the mutation data for estimateProperty",state.status)
+  },
+  SHOW_ESTIMATE_PROPERTY(state,properties){
+    state.properties=properties;
+    console.log("the mutation data for the property work",state.properties)
+  },
 }

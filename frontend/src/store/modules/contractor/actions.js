@@ -13,7 +13,7 @@ export const actions={
   },
 
 
-  async submitEstimateData({commit},{workId,estimate,time}){
+  async submitEstimateData({commit},{propertyid,estimate,time}){
     try {
       const response =await fetch('http://localhost:3000/submitestimate',{
         method:'POST',
@@ -21,13 +21,13 @@ export const actions={
         headers:{
           'Content-Type': 'application/json',
           },
-        body:JSON.stringify({workId,estimate,time}),
+        body:JSON.stringify({propertyid,estimate,time}),
       });
       console.log("response data",response)
       if(response.ok){
         console.log("asfeegdrgr")
         const estimate=await response.json();
-        commit('SUBMIT_ESTIMATE',estimate.time)
+        commit('SUBMIT_ESTIMATE',estimate)
 
         console.log("login successful and has been set successful");
         console.log("login successful")
@@ -37,5 +37,5 @@ export const actions={
     }
   },
 
-
+  
 }

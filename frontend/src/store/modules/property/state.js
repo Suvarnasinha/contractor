@@ -1,5 +1,8 @@
 export const state={
    name:"",
-   property:"",
-   showdata:""
+   property:[],
+   showdata:"",
+   estimate:[],
+   estimateProperty:'',
+   properties:[]
 }

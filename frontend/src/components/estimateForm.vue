@@ -20,11 +20,11 @@ const estimate = ref('');
 const time = ref('');
 
 const submitEstimate = async () => {
-  const workId = router.currentRoute.value.params.workId;
-  console.log("propertyidhelloworld",workId)
+  const propertyid = router.currentRoute.value.params.propertyid;
+  console.log("propertyidhelloworld",propertyid)
   console.log(estimate.value,);
   console.log(time.value);
-await store.dispatch('submitEstimateData', { workId:workId, estimate: estimate.value,time:time.value});
+await store.dispatch('submitEstimateData', { propertyid:propertyid, estimate: estimate.value,time:time.value});
   router.push({ name: 'propertyContList' }); 
 }
 

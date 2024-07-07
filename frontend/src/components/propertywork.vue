@@ -39,12 +39,15 @@ const addWork = () => {
 
 const submitWork = async () => {
   const formData = new FormData();
-  workData.value.forEach((work) => {
-    formData.append('descriptions[]', work.description);
+
+  workData.value.forEach((work, index) => {
+    formData.append(`descriptions[${index}]`, work.description);
     work.images.forEach((image) => {
-      formData.append(`images`, image);
+      formData.append('images', image);
     });
   });
+
+  console.log("FormData contents:", Array.from(formData.entries()));
 
   await store.dispatch('propertywork', { formData, propertyId });
 };
