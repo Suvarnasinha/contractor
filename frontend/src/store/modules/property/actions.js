@@ -41,6 +41,7 @@ export const actions={
         const response = await fetch(`http://localhost:3000/addwork/${propertyId}`, {
           method: 'POST',
           credentials: "include",
+          'Content-Type': 'multipart/form-data' ,
           body: formData, 
         });
     
@@ -102,6 +103,7 @@ export const actions={
   
 
     async updateEstimateStatus({ dispatch, commit }, { contractorworkid, status, propertyId }) {
+      console.log("hellomoto",contractorworkid, status, propertyId)
       try {
         const response = await fetch(`http://localhost:3000/updateEstimateStatus`, {
           method: 'POST',

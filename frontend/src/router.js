@@ -10,6 +10,13 @@ import estimateForm from './components/estimateForm.vue'
 import propertyShowEstimate from './components/propertyShowEstimate.vue'
 import estimateShow from './components/estimateShow.vue'
 import registration from './components/registration.vue'
+import proofWork from './components/proofWork.vue'
+import addProof from './components/addProof.vue'
+import viewProof from './components/viewProof.vue'
+import viewComment from './components/viewComment.vue'
+import addComment from './components/addComment.vue'
+import propertiesShowComment from './components/propertiesShowComment.vue'
+
 
 const routes = [
   {
@@ -61,6 +68,36 @@ const routes = [
     name:'estimateShow',
     path:'/estimateshow',
     component:estimateShow,
+  },
+  {
+    name:'proofWork',
+    path:'/proofWork',
+    component:proofWork,
+  },
+  {
+    name:'addProof',
+    path:'/addProof',
+    component:addProof,
+  },
+  {
+    name:'viewProof',
+    path:'/viewProof',
+    component:viewProof,
+  },
+  {
+    name:'viewComment',
+    path:'/comments/:propertyId',
+    component:viewComment,
+  },
+  {
+    name:'addComment',
+    path:'/proof/details/:propertyId/:proofworkId',
+    component:addComment,
+  },
+  {
+    name:'propertiesShowComment',
+    path:'/propertiesShowComment',
+    component:propertiesShowComment,
   },
   // {
   //   name:'propertyShowEstimate',

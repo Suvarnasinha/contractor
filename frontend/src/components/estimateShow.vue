@@ -16,7 +16,7 @@
     </div>
   </div>
 </template>
-
+ 
 <script setup>
 import { computed,onMounted } from 'vue';
 import { useStore } from 'vuex';
@@ -39,7 +39,7 @@ console.log("ererererere",estimates.value)
 const acceptEstimate = async (contractorworkid) => {
   const propertyId = router.currentRoute.value.params.propertyid;
 // console.log(contractorworkid)
-//    alert(propertyId);
+  //  alert(propertyId);
    await store.dispatch('updateEstimateStatus', { contractorworkid, status: 'accepted',propertyId });
    fetchProEstimate();
   };

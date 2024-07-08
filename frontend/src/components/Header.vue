@@ -19,7 +19,16 @@
         addproperty
       </v-btn>
       <v-btn text to="/propertyShowEstimate">
-        User
+        propertyShowEstimate
+      </v-btn>
+      <v-btn text to="/proofWork">
+        proof form generate
+      </v-btn>
+      <v-btn text to="/viewProof">
+        viewProof
+      </v-btn>
+      <v-btn text to="/propertiesShowComment">
+        propertiesShowComment
       </v-btn>
     </v-app-bar>
     <v-main>
