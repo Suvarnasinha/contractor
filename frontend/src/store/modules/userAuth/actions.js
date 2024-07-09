@@ -40,6 +40,7 @@ export const actions= {
         console.log("asfeegdrgr")
         const login=await response.json();
         commit('SET_USERDETAIL',login.email)
+        commit('SET_ROLE',login.role)
         // document.cookie = `token=${login.token};secure `;
         console.log("login successful and cookie has been set successful");
         console.log("login successful")

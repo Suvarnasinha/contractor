@@ -6,5 +6,9 @@ export const mutations={
   SUBMIT_ESTIMATE(state,estimate){
     state.estimate=estimate;
     console.log("the mutation data for user",state.estimate)
+  },
+  FETCH_PROPERTY_COMMENT(state,propertyData){
+    state.propertyData=propertyData;
+    console.log("the mutation data for user",state.propertyData)
   }
 }

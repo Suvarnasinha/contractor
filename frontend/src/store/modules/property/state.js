@@ -4,5 +4,9 @@ export const state={
    showdata:"",
    estimate:[],
    estimateProperty:'',
-   properties:[]
+   properties:[],
+   description:[],
+   comment:'',
+   showprop:'',
+   workDetails: []
 }

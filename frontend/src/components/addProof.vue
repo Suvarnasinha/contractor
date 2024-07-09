@@ -51,6 +51,8 @@ const submitProof = async () => {
 
   });
 
+
+  
   try {
     console.log("object");
     const response = await fetch('http://localhost:3000/addProof', {

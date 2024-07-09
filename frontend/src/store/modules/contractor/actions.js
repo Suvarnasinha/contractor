@@ -37,5 +37,20 @@ export const actions={
     }
   },
 
+
+  async fetchPropertiesComment({commit}){
+    try {
+      const response = await fetch('http://localhost:3000/getCommentProperties',{
+        credentials:"include"
+      });
+      const properties = await response.json();
+      console.log("properties",properties);
+      commit('FETCH_PROPERTY_COMMENT', properties);
+    } catch (error) {
+      console.error('Error fetching properties:', error);
+      
+    }
+  }
+
   
 }

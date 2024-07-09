@@ -12,6 +12,9 @@
       <v-btn text to="/forgetPassword">
         FORGET Password
       </v-btn>
+      <v-btn text to="/propertyDashboard">
+        propertyDashboard
+      </v-btn>
       <v-btn text to="/propertylist">
         propertylist
       </v-btn>

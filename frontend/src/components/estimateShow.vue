@@ -9,8 +9,9 @@
           <v-card-text>
             <div>Time: {{ estimate.time }}</div>
             <div>Description: {{ estimate.work_description }}</div>
+            <!-- <input type="hidden" name="hello" value="estimate"> -->
           </v-card-text>
-          <v-btn @click="acceptEstimate(estimate.contractorworkid)">Accept</v-btn>
+          <v-btn @click="acceptEstimate(estimate.contractor_id,estimate.contractorworkid)">Accept</v-btn>
         </v-card>
       </div>
     </div>
@@ -36,11 +37,11 @@ const estimates = computed(() => store.state.property.estimate);
 console.log("ererererere",estimates.value)
 
 
-const acceptEstimate = async (contractorworkid) => {
+const acceptEstimate = async (contractor_id,contractorworkid)=> {
   const propertyId = router.currentRoute.value.params.propertyid;
-// console.log(contractorworkid)
-  //  alert(propertyId);
-   await store.dispatch('updateEstimateStatus', { contractorworkid, status: 'accepted',propertyId });
+// console.log()
+   alert(contractor_id);
+   await store.dispatch('updateEstimateStatus', { contractor_id,contractorworkid,status: 'accepted',propertyId });
    fetchProEstimate();
   };
 

@@ -28,4 +28,22 @@ export const mutations={
     state.properties=properties;
     console.log("the mutation data for the property work",state.properties)
   },
+  GET_COMMENT_DESCRIPTION(state,description){
+    state.description=description;
+    console.log("the mutation data for GET_COMMENT_DESCRIPTION",state.description)
+  },
+  SUBMIT_COMMENT(state,comment){
+    state.comment=comment;
+    console.log("the mutation data for the submit comment",state.comment);
+  },
+
+  SHOW_PROPERTIES_DATA(state,showprop){
+    state.showprop=showprop;
+    console.log("the mutation data for the submit comment",state.showprop);
+  },
+  SET_WORK_DETAILS(state, workDetails) {
+    state.workDetails = workDetails;
+    console.log("the mutation data for the submit comment",state.workDetails);
+
+  }
 }

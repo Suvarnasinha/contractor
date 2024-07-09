@@ -16,8 +16,9 @@ import viewProof from './components/viewProof.vue'
 import viewComment from './components/viewComment.vue'
 import addComment from './components/addComment.vue'
 import propertiesShowComment from './components/propertiesShowComment.vue'
-
-
+import propertyDashboard from './components/propertyDashboard.vue'
+import showStatus from './components/showStatus.vue'
+import showWork from './components/showWork.vue'
 const routes = [
   {
     name:'Registration',
@@ -91,7 +92,7 @@ const routes = [
   },
   {
     name:'addComment',
-    path:'/proof/details/:propertyId/:proofworkId',
+    path:'/proof/details/:propertyId',
     component:addComment,
   },
   {
@@ -99,15 +100,25 @@ const routes = [
     path:'/propertiesShowComment',
     component:propertiesShowComment,
   },
-  // {
-  //   name:'propertyShowEstimate',
-  //   path:'/propertyShowEstimate',
-  //   component:propertyShowEstimate,
-  // },
+  {
+    name:'propertyDashboard',
+    path:'/propertyDashboard',
+    component:propertyDashboard,
+  },
   {
     name:'pagenotfound',
     path:'/:pathMatch(.*)*',
     component:PageNotFound
+  },
+  {
+    name:'showStatus',
+    path:'/showStatus',
+    component:showStatus
+  },
+  {
+    name:'showWork',
+    path:'/showWork',
+    component:showWork
   }
 
 ];

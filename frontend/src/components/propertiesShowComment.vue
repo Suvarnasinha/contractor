@@ -20,25 +20,19 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
+import { useStore } from 'vuex';
 
-const properties = ref([]);
+const store = useStore();
+
+
+const properties = computed(() => {
+ return store.state.contractor.propertyData
+});
 
 const fetchProperties = async () => {
-  try {
-    const response = await fetch('http://localhost:3000/getCommentProperties',{
-      credentials: "include",
-    });
-    if (!response.ok) {
-      throw new Error('Failed to fetch properties');
-    }
-    const data = await response.json();
-    properties.value = data;
-  } catch (error) {
-    console.error('Error fetching properties:', error);
-    // Handle error in fetching properties
-  }
+  await store.dispatch('fetchPropertiesComment');
 };
 
 const router = useRouter();
@@ -47,5 +41,5 @@ const showComments = (propertyId) => {
   router.push(`/comments/${propertyId}`);
 };
 
-fetchProperties();
+onMounted(fetchProperties);
 </script>

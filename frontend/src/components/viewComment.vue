@@ -1,64 +1,15 @@
-<!-- <template>
-  <div>
-    <h2>Proof Details</h2>
-    <div v-for="proof in proofs" :key="proof.proofworkid">
-      <p>{{ proof.proof_description }}</p>
-      <div v-for="image in proof.images" :key="image.imageid">
-        <img :src="image.image_url" alt="Proof Image" />
-      </div>
-    </div>
-
-    <h3>Comments</h3>
-    <v-list>
-      <v-list-item v-for="comment in comments" :key="comment.commentid">
-        <v-list-item-content>
-          <v-list-item-title>{{ comment.comment }}</v-list-item-title>
-        </v-list-item-content>
-      </v-list-item>
-    </v-list>
-  </div>
-</template>
-
-<script setup>
-import { ref, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
-
-const route = useRoute();
-const proofworkId = route.params.proofworkId;
-
-const proofs = ref([]);
-const comments = ref([]);
-
-const fetchProofDetails = async () => {
-  try {
-    const response = await fetch(`/api/proof/details/${proofworkId}`);
-    proofs.value = await response.json();
-  } catch (error) {
-    console.error('Error fetching proof details:', error);
-  }
-};
-
-const fetchComments = async () => {
-  try {
-    const response = await fetch(`/api/proof/comments/${proofworkId}`);
-    comments.value = await response.json();
-  } catch (error) {
-    console.error('Error fetching comments:', error);
-  }
-};
-
-onMounted(() => {
-  fetchProofDetails();
-  fetchComments();
-});
-</script> -->
-
-
-
-<!-- Comments.vue -->
 <template>
   <div>
     <h2>Comments for Property ID: {{ propertyId }}</h2>
+    <div v-for="proof in proofs" :key="proof.proofworkid">
+      <p>{{ proof.description }}</p>
+      <!-- <div v-for="images in proof.image" :key="images"> -->
+        <img :src="proof.image" alt="Proof Image" />
+      <!-- </div>  -->
+      <!-- <div v-for="image in proof.image" :key="image.imageid">
+        <img :src=" h" alt="Proof Image" />
+      </div> -->
+    </div>
     <v-card v-for="comment in comments" :key="comment.commentid">
       <v-card-text>{{ comment.comment }}</v-card-text>
     </v-card>
@@ -66,17 +17,20 @@ onMounted(() => {
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useRoute } from 'vue-router';
+import { useStore } from 'vuex';
 
+const store=useStore();
 const route = useRoute();
-// const router = useRouter();
 const propertyId = ref(route.params.propertyId);
-console.log(propertyId.value);
 const comments = ref([]);
-
+const proofs = computed(() =>{ 
+  return store.state.property.description});
+console.log("object",proofs.value);
 const fetchComments = async () => {
   try {
+   
     const response = await fetch(`http://localhost:3000/comments/${propertyId.value}`);
     if (!response.ok) {
       throw new Error('Failed to fetch comments');
@@ -85,9 +39,16 @@ const fetchComments = async () => {
     comments.value = data;
   } catch (error) {
     console.error('Error fetching comments:', error);
-    // Handle error in fetching comments
+
   }
 };
+const getPropertyData =()=>{
+  // alert(propertyId.value)
+  const propertyid=propertyId.value;
+  // alert(propertyid)
+   store.dispatch('getCommentDescription', { propertyId:propertyid });
+}
 
-onMounted(fetchComments);
+onMounted(fetchComments,getPropertyData()
+);
 </script>

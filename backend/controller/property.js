@@ -8,6 +8,8 @@ exports.addProperty = async (req, res) => {
     const addProperty = `INSERT INTO property (name, address, description, userid) VALUES (?, ?, ?, ?)`;
     const [addPropertyData] = await con.promise().query(addProperty, [name, address, description, userid]);
     const propertyId = addPropertyData.insertId;
+    const addPropState=`INSERT INTO propertystate (propertyId, state) VALUES (?, ?);`;
+    const [addPropStateData]= await con.promise().query(addPropState, [propertyId,'Property Added']);
     res.json({ propertyId, name, address, description, userid });
   } catch (error) {
     res.json({ error: error.message });
@@ -23,34 +25,6 @@ exports.showAllProperty = async (req, res) => {
     res.json({ error: error.message });
   }
 };
-
-// exports.updateEstimateStatus = async (req, res) => {
-//   const { contractorworkid, status } = req.body;
-//   const contractorid = req.userid;
-
-//   try {
-//     if (status === 'accepted') {
-//       const deletetheremainingcon = `DELETE FROM contractorwork WHERE contractworkid != ?`;
-//       await con.promise().query(deletetheremainingcon, [contractorworkid]);
-
-//       const insertintoworkcontrator = `INSERT INTO workcontractor (workid, contractorid) VALUES (?, ?)`;
-//       await con.promise().query(insertintoworkcontrator, [workId, contractorworkid]);
-
-//       const selecttheworkid = `SELECT workid FROM contractwork WHERE contractworkid = ?`;
-//       const [rows] = await con.promise().query(selecttheworkid, [contractorworkid]);
-//       const workId = rows[0].workid;
-
-//       const insertintowork = 'UPDATE work SET accept = ? WHERE workid = ?';
-//       await con.promise().query(insertintowork, [1, workId]);
-
-//       res.json(contractorworkid);
-//     } else {
-//       res.json({ message: 'Error: status not accepted' });
-//     }
-//   } catch (error) {
-//     res.status(500).json({ error: error.message });
-//   }
-// };
 
 exports.fetchPropertyEstimate = async (req, res) => {
   const userId = req.userid;
@@ -96,6 +70,7 @@ exports.fetchPropertyEstimate = async (req, res) => {
 
 exports.getEstimate = async (req, res) => {
   const propertyId = req.body.propertyId;
+  console.log("propertyId",propertyId);
 
   try {
     const [rows] = await con.promise().query(`
@@ -125,15 +100,6 @@ WHERE
 };
 
 
-
-
-
-
-
-
-
-
-
 exports.showAllPropertyContEstimation= async (req, res) => {
   try {
     const userid =req.userid;
@@ -156,14 +122,15 @@ JOIN
 JOIN 
     users u ON p.userid = u.userid
 WHERE   
-    w.accept = 0
-    AND u.userid = ?
+   
+w.accept = 0
+AND 
+    u.userid = ?
 GROUP BY 
     p.propertyid, p.name, p.address, p.description, u.userid
 
 
     `,[userid]);
-    
     res.json(rows);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -203,13 +170,7 @@ console.log("asdfg",files)
       const startIdx = i * maxFilesPerDescription;
       const endIdx = Math.min(startIdx + maxFilesPerDescription, files.length);
       const descriptionFiles = files.slice(startIdx, endIdx);
-      
-      // let fileIndex = 0;
-      // const numFiles = Math.ceil(files.length / descriptions.length);
-      // const descriptionFiles = files.slice(fileIndex, fileIndex + numFiles);
-      // fileIndex += numFiles;
 
-      // const descriptionFiles = files.slice(i * 5, (i + 1) * 5);
             console.log('Description Files:', descriptionFiles);
             for (const file of descriptionFiles) {
               await await con.promise().query(
@@ -219,6 +180,9 @@ console.log("asdfg",files)
           }
       
   }
+  const addWorkState=`INSERT INTO propertystate (propertyId, state) VALUES (?, ?);`;
+  const [addWorkStateData]= await con.promise().query(addWorkState, [propertyId,'Work Added']);
+  
 
     res.json({
       message: 'Work added successfully',
@@ -237,9 +201,9 @@ console.log("asdfg",files)
 
 
 exports.updateEstimateStatus = async (req, res) => {
-  const { contractorworkid, status } = req.body;
+  const { contractor_id,contractorworkid, status } = req.body;
   const contractorid = req.userid;
-
+  console.log("objectttttttttttttttttttttttttttt",contractor_id);
   try {
     if (status === 'accepted') {
       console.log(`Received request to accept estimate with contractorworkid: ${contractorworkid} and status: ${status}`);
@@ -256,6 +220,9 @@ exports.updateEstimateStatus = async (req, res) => {
       const propertyId = rows[0].propertyid;
       console.log(`Property ID associated with contractorworkid ${contractorworkid}: ${propertyId}`);
 
+      const addEstimateState=`INSERT INTO propertystate (propertyId, state) VALUES (?, ?);`;
+    const [addEstimateStateData]= await con.promise().query(addEstimateState, [propertyId,'Estimation Approved(In progress)']);
+
       // Delete all other contractor works for the same propertyid
       const deleteOtherContractorWorksQuery = `DELETE FROM contractorwork WHERE propertyid = ? AND contractorworkid != ?`;
       const deleteResult = await con.promise().query(deleteOtherContractorWorksQuery, [propertyId, contractorworkid]);
@@ -263,8 +230,8 @@ exports.updateEstimateStatus = async (req, res) => {
 
       // Insert the accepted contractor work into the workcontractor table
       const insertIntoWorkContractorQuery = `INSERT INTO workcontractor (propertyid, contactorid) VALUES (?, ?)`;
-      await con.promise().query(insertIntoWorkContractorQuery, [propertyId, contractorid]);
-      console.log(`Inserted into workcontractor table: propertyid=${propertyId}, contractorid=${contractorid}`);
+      await con.promise().query(insertIntoWorkContractorQuery, [propertyId, contractor_id]);
+      console.log(`Inserted into workcontractor table: propertyid=${propertyId}, contractor_id=${contractor_id}`);
 
       // Update the work table to set the accept status to 1
       const updateWorkQuery = `UPDATE work SET accept = ? WHERE propertyid = ?`;
@@ -290,10 +257,10 @@ exports.getProofDataForOwner = async (req, res) => {
 
   try {
     const [proofData] = await con.promise().query(
-      `SELECT p.propertyid, p.name AS property_name, pw.proofworkid, pw.description AS proof_description
-       FROM property p
-       INNER JOIN proofwork pw ON p.propertyid = pw.propertyid
-       WHERE p.userid = ?`,
+      `SELECT distinct p.propertyid, p.name AS property_name
+      FROM property p
+      INNER JOIN proofwork pw ON p.propertyid = pw.propertyid
+      WHERE p.userid = ?`,
       [userid]
     );
     res.json(proofData);
@@ -302,3 +269,80 @@ exports.getProofDataForOwner = async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch proof data for owner' });
   }
 };
+
+exports.getcommentdescription = async(req,res)=>{
+  const propertyId = req.params.propertyId;
+  console.log("property:getcommentdescription",propertyId)
+  try{
+      const [getcommentdescription] = await con.promise().query(
+      `select pw.description,pwi.image as image from proofwork pw join proofworkimage pwi on pw.proofworkid=pwi.proofdataid where propertyid=?`,
+      [propertyId]
+    );
+    res.json(getcommentdescription);
+  }catch(error){
+    console.log("error in fetching the description:",error)
+  }
+}
+
+
+
+exports.addComment = async (req, res) => {
+  const { propertyId, comment } = req.body;
+  // const userid = req.userid;
+
+  try {
+    const addCommentQuery = `INSERT INTO comment (propertyid, comment) VALUES (?, ?)`;
+    await con.promise().query(addCommentQuery, [propertyId, comment]);
+    const addCommentState=`INSERT INTO propertystate (propertyId, state) VALUES (?, ?);`;
+    const [addCommentStateData]= await con.promise().query(addCommentState, [propertyId,'Reviewed and have Mistake']);
+    res.json({ message: 'Comment added successfully' });
+  } catch (error) {
+    console.log('Error adding comment:', error);
+    res.status(500).json({ error: 'Failed to add comment' });
+  }
+};
+
+
+exports.showProperties=async(req,res)=>{
+  const userid= req.userid;
+  console.log("userid:",userid)
+  try {
+    const [showproperties] = await con.promise().query(
+      `select propertyid,name,address,description from property where userid=?`,
+      [userid]
+    );
+    res.json(showproperties);
+  } catch (error) {
+    console.log("error",error);
+  }
+}
+
+
+exports.showStatus=async(req,res)=>{
+  const propertyid =req.body;
+  try {
+    const [showStatus] = await con.promise().query(
+      `select state from propertystate where propertyId=?`,
+      [propertyid]
+    );
+    res.json(showStatus);
+  } catch (error) {
+    console.log("error",error);
+  }
+}
+
+
+exports.showWork=async(req,res)=>{
+  const { propertyid } = req.params;
+  console.log("object",propertyid);
+try{
+  const [showWork] = await con.promise().query(
+    `select w.description,wi.image from work u join workdeatil w on u.workid=w.workid join workimage wi on 
+    w.workdetailid=wi.workdetailid where u.propertyid=?`,
+    [propertyid]
+  );
+  res.json(showWork);
+}catch(error){
+  console.log("error",error);
+}
+}
