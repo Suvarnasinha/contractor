@@ -3,34 +3,28 @@
     <v-app-bar app>
       <v-toolbar-title>ProCon</v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn text to="/">
-        Registration
-      </v-btn>
-      <v-btn text to="/login">
-        Login
-      </v-btn>
-      <v-btn text to="/forgetPassword">
-        FORGET Password
-      </v-btn>
-      <v-btn text to="/propertyDashboard">
+
+     
+      <v-btn v-if="role == 0" text to="/propertyDashboard">
         propertyDashboard
       </v-btn>
-      <v-btn text to="/propertylist">
+    
+      <v-btn v-if="role == 1" text to="/propertylist">
         propertylist
       </v-btn>
-      <v-btn text to="/addproperty">
+      <v-btn v-if="role == 0" text to="/addproperty">
         addproperty
       </v-btn>
-      <v-btn text to="/propertyShowEstimate">
+      <v-btn v-if="role == 0" text to="/propertyShowEstimate">
         propertyShowEstimate
       </v-btn>
-      <v-btn text to="/proofWork">
+      <v-btn v-if="role == 1" text to="/proofWork">
         proof form generate
       </v-btn>
-      <v-btn text to="/viewProof">
+      <v-btn v-if="role == 0" text to="/viewProof">
         viewProof
       </v-btn>
-      <v-btn text to="/propertiesShowComment">
+      <v-btn v-if="role == 1" text to="/propertiesShowComment">
         propertiesShowComment
       </v-btn>
     </v-app-bar>
@@ -40,4 +34,15 @@
   </v-app>
 </template>
 <script setup>
-  </script>
+import { computed, onMounted } from "vue";
+import { useStore } from "vuex";
+
+const store= useStore();
+const role = computed(() => {
+  return store.state.userAuth.role;
+});
+onMounted(()=>{
+  console.log("suvarna srayshi sinha",role.value);
+
+})
+</script>

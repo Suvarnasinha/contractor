@@ -8,5 +8,6 @@ export const state={
    description:[],
    comment:'',
    showprop:'',
-   workDetails: []
+   workDetails: [],
+   status:[]
 }

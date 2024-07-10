@@ -10,7 +10,7 @@
           <v-card class="mx-auto my-3 work-card">
             <v-card-title>{{ work.description }}</v-card-title>
             <v-img
-            :src="'http://localhost:3000/uploads/'+work.image"
+            :src="'http://localhost:3000/'+work.image"
               height="200"
               contain
               class="white--text align-end"
@@ -42,7 +42,7 @@ const fetchWorkDetails = async () => {
 onMounted(fetchWorkDetails);
 
 const goBack = () => {
-  router.push({ name: 'propertyDashboard' });
+  router.push({ name: 'propertyContList' });
 };
 </script>
 

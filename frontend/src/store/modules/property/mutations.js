@@ -44,6 +44,9 @@ export const mutations={
   SET_WORK_DETAILS(state, workDetails) {
     state.workDetails = workDetails;
     console.log("the mutation data for the submit comment",state.workDetails);
-
+  },
+  SET_STATUS(state,status){
+    state.status=status;
+    console.log("the mutation data for status",state.status)
   }
 }

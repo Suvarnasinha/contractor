@@ -15,7 +15,7 @@ export const actions= {
         console.log("asfeegdrgr")
         const register=await response.json();
         console.log("fordata::::",register);
-        commit('SET_USERDETAIL',register.email)
+        commit('SET_USER',register.email)
         console.log("login successful");
         
       }
@@ -37,13 +37,11 @@ export const actions= {
       });
       console.log("response data",response)
       if(response.ok){
-        console.log("asfeegdrgr")
         const login=await response.json();
-        commit('SET_USERDETAIL',login.email)
-        commit('SET_ROLE',login.role)
-        // document.cookie = `token=${login.token};secure `;
+        console.log("asdfdsgdgdgdfgfgfgdfgfeegdrgr",login)
+        await commit('SET_USERDETAIL',login)
         console.log("login successful and cookie has been set successful");
-        console.log("login successful")
+        // console.log("login successful")
       }
     } catch (error) {
       console.error("erreor in fetching the users",error)

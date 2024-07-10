@@ -19,6 +19,10 @@ import propertiesShowComment from './components/propertiesShowComment.vue'
 import propertyDashboard from './components/propertyDashboard.vue'
 import showStatus from './components/showStatus.vue'
 import showWork from './components/showWork.vue'
+import contractorChat from './components/contractorChat.vue'
+import showWorkContractor from './components/showWorkContractor.vue'
+import {store} from './store'
+
 const routes = [
   {
     name:'Registration',
@@ -39,88 +43,114 @@ const routes = [
     name:'propertyDisplay',
     path: '/addproperty',
     component: propertyDisplay,
+    meta: { requiredAuth: true },
   },
   {
     name:'propertyWork',
     path: '/propertyWork/:propertyId',
     component: propertywork,
+    meta: { requiredAuth: true },
   },
   {
     name:'showProperty',
     path:'/showproperty',
     component:showProperty,
+    meta: { requiredAuth: true },
   },
   {
     name:'propertyContList',
     path:'/propertylist',
     component:propertyContList,
+    meta: { requiredAuth: true },
   },
   {
     name:'estimateForm',
     path:'/estimateForm',
     component:estimateForm,
+    meta: { requiredAuth: true },
   },
   {
     name:'propertyShowEstimate',
     path:'/propertyShowEstimate',
     component:propertyShowEstimate,
+    meta: { requiredAuth: true },
   },
   {
     name:'estimateShow',
     path:'/estimateshow',
     component:estimateShow,
+    meta: { requiredAuth: true },
   },
   {
     name:'proofWork',
     path:'/proofWork',
     component:proofWork,
+    meta: { requiredAuth: true },
   },
   {
     name:'addProof',
     path:'/addProof',
     component:addProof,
+    meta: { requiredAuth: true },
   },
   {
     name:'viewProof',
     path:'/viewProof',
     component:viewProof,
+    meta: { requiredAuth: true },
   },
   {
     name:'viewComment',
     path:'/comments/:propertyId',
     component:viewComment,
+    meta: { requiredAuth: true },
   },
   {
     name:'addComment',
     path:'/proof/details/:propertyId',
     component:addComment,
+    meta: { requiredAuth: true },
   },
   {
     name:'propertiesShowComment',
     path:'/propertiesShowComment',
     component:propertiesShowComment,
+    meta: { requiredAuth: true },
   },
   {
     name:'propertyDashboard',
     path:'/propertyDashboard',
     component:propertyDashboard,
+    meta: { requiredAuth: true },
   },
   {
     name:'pagenotfound',
     path:'/:pathMatch(.*)*',
     component:PageNotFound
+
   },
   {
     name:'showStatus',
     path:'/showStatus',
-    component:showStatus
+    component:showStatus,
+    meta: { requiredAuth: true },
   },
   {
     name:'showWork',
     path:'/showWork',
-    component:showWork
+    component:showWork,
+    meta: { requiredAuth: true },
+  },
+  {
+    name:'contractorChat',
+    path:'/contractorChat',
+    component:contractorChat
+  },
+  {
+    name:'showWorkContractor',
+    path:'/showWorkContractor',
+    component:showWorkContractor
   }
-
 ];
 
 export const router = createRouter({
@@ -144,4 +174,24 @@ export const router = createRouter({
 //   }
 // }
 // })  
+
+
+
+
+router.beforeEach((to, from, next) => {
+  if (
+    to.name == "Login" || to.name == "Registration" || to.name == "forgetPassword" ) {
+    next();
+  } else {
+    console.log("qwertyuioplkjhgf",store.state.userAuth.LogIn)
+    if (!store.state.userAuth.LogIn) {
+      console.log("object");
+      console.log("data store here login",store.state.userAuth.LogIn);
+      next({ path: "/login" });
+    } else {
+      next();
+    }
+  }
+});
+
 

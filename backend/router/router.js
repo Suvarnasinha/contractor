@@ -2,9 +2,9 @@ const express = require('express');
 const router = express.Router();
 const { registration, login, forgetpassword } = require('../controller/userAuth');
 const { addProperty, showAllProperty, addWork,updateEstimateStatus,getEstimate,fetchPropertyEstimate,showAllPropertyContEstimation,getProofDataForOwner,addComment
-  ,getcommentdescription,showProperties,showStatus,showWork } = require('../controller/property');
+  ,getcommentdescription,showProperties,showStatus,showWork,seechatperson } = require('../controller/property');
 const { authenticate } = require('../middleware/authentication');
-const { showAllPropertyCont, submitEstimate,proofData,addProof,getCommentProperties,getComments } = require('../controller/contractor');
+const { showAllPropertyCont, submitEstimate,proofData,addProof,getCommentProperties,getComments,contractChat,sendChat,seeMessage } = require('../controller/contractor');
 const upload = require('../middleware/multer');
 
 router.post("/registration", registration);
@@ -22,14 +22,16 @@ router.get('/getProofDataForOwner', authenticate, getProofDataForOwner);
 router.get('/getCommentProperties', authenticate, getCommentProperties);
 router.post('/submitestimate', authenticate, submitEstimate);
 router.post('/updateEstimateStatus', authenticate, updateEstimateStatus);
+router.post('/updateEstimateStatus', authenticate, updateEstimateStatus);
 router.post('/addProof', authenticate,upload.array('images', 100), addProof);
-router.get('/comments/:propertyId', getComments);
-router.get('/commentdescription/:propertyId',authenticate,getcommentdescription)
-router.get('/showProperties',authenticate,showProperties)
-router.get('/showStatus',showStatus)
-router.get('/showWork/:propertyid',showWork)
-
-
+router.get('/comments/:propertyId',getComments);
+router.get('/commentdescription/:propertyId',authenticate,getcommentdescription);
+router.get('/showProperties',authenticate,showProperties);
+router.get('/showStatus/:propertyid',showStatus);
+router.get('/showWork/:propertyid',showWork);
+router.post('/contractChat/:propertyid',contractChat)
+router.post('/chat/message',authenticate,sendChat)
+router.get('/chat/show/:propertyid',seeMessage)
 router.post('/addcomment',addComment)
-
+router.get('/chat/property/:propertyid',seechatperson)
 module.exports=router;

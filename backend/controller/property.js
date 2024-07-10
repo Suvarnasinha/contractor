@@ -103,7 +103,6 @@ WHERE
 exports.showAllPropertyContEstimation= async (req, res) => {
   try {
     const userid =req.userid;
-    console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',userid)
     const [rows] = await con.promise().query(`
     SELECT 
     p.propertyid,
@@ -319,11 +318,12 @@ exports.showProperties=async(req,res)=>{
 
 
 exports.showStatus=async(req,res)=>{
-  const propertyid =req.body;
+  const propertyId =req.params.propertyid;
+  console.log(propertyId)
   try {
     const [showStatus] = await con.promise().query(
       `select state from propertystate where propertyId=?`,
-      [propertyid]
+      [propertyId]
     );
     res.json(showStatus);
   } catch (error) {
@@ -341,8 +341,26 @@ try{
     w.workdetailid=wi.workdetailid where u.propertyid=?`,
     [propertyid]
   );
+  console.log("qwerty",showWork);
   res.json(showWork);
 }catch(error){
   console.log("error",error);
 }
+}
+
+
+exports.seechatperson=async(req,res)=>{
+  const propertyid = req.params.propertyid;
+  try {
+    const query = `
+      SELECT DISTINCT u.userid, u.name
+      FROM chat_message cm
+      JOIN users u ON cm.senderid = u.userid
+      WHERE cm.propertyid = ?`;
+    const [contractors] = await con.promise().query(query, [propertyid]);
+    res.json(contractors);
+  } catch (error) {
+    console.error('Error fetching contractors:', error);
+    res.status(500).json({ error: error.message });
+  }
 }

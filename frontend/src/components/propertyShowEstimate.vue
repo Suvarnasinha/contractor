@@ -11,7 +11,7 @@
             <v-card-text>{{ property.property_description }}</v-card-text>
             <v-card-text>{{ property.propertyid }}</v-card-text>
 
-            <v-btn @click="showEstimate(property.propertyid)">Show Estimate</v-btn>
+            <v-btn @click="showEstimate(property.propertyid)">Show Estimates</v-btn>
           </v-card>
         </v-col>
       </v-row>
@@ -30,7 +30,7 @@ const router = useRouter();
 const fetchContProperties = async () => {
   await store.dispatch('fetchContProperties');
 };
-
+console.log("object");
 onMounted(fetchContProperties);
 
 const properties = computed(() => {

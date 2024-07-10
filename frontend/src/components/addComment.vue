@@ -1,10 +1,10 @@
 <template>
   <div>
-    <h2>Proof Details</h2>
+    <h2>Proof Details here</h2>
     <div v-for="(images, description) in groupedProofs" :key="description" class="proof-group">
       <p>{{ description }}</p>
       <div class="image-row">
-        <img v-for="(image, index) in images" :key="index" :src="image" alt="Proof Image" class="proof-image"/>
+        <img v-for="(image, index) in images" :key="index" :src="'http://localhost:3000/'+image" alt="Proof Image" class="proof-image"/>
       </div>
     </div>
     <h3>Comments</h3>
@@ -80,7 +80,7 @@ onMounted(() => {
 
 <style scoped>
 h1, h2, h3 {
-  color: #4CAF50; /* Light green for headings */
+  color: #185982; /* Light green for headings */
   font-family: 'Roboto', sans-serif;
   margin-bottom: 20px;
 }
@@ -93,25 +93,25 @@ v-card {
 
 v-card-title {
   font-size: 1.5rem;
-  color: #2E7D32; /* Darker green for card titles */
+  color: #113013; 
   font-weight: 700;
   font-family: 'Roboto', sans-serif;
 }
 
 v-card-subtitle, v-card-text {
   font-size: 1rem;
-  color: #555; /* Medium grey for subtitles and text */
+  color: #555; 
   font-family: 'Roboto', sans-serif;
 }
 
 v-btn {
-  background-color: #81C784; /* Light green for buttons */
+  background-color: #364a96; 
   color: white;
   margin: 10px 0;
 }
 
 v-btn:hover {
-  background-color: #66BB6A; /* Slightly darker green on hover */
+  background-color: #0b0b0b; 
 }
 
 .proof-group {
@@ -134,7 +134,7 @@ v-container {
 
 .v-list-item-title {
   font-size: 1rem;
-  color: #509d53; /* Light green for list item titles */
+  color: #50659d; 
   font-family: 'Roboto', sans-serif;
 }
 

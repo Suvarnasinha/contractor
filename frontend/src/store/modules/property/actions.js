@@ -193,8 +193,6 @@ console.log("add comment propertyID333333333333",propertyId)
       }
     }, 
 
-
-
     async fetchWorkDetails({ commit }, propertyId) {
       try {
         const response = await fetch(`http://localhost:3000/showWork/${propertyId}`);
@@ -204,6 +202,17 @@ console.log("add comment propertyID333333333333",propertyId)
       } catch (error) {
         console.error('Error fetching work details:', error);
       }
-    }
+    },
     
+    async propertyStatus({ commit }, propertyId){
+      try{
+        const response = await fetch(`http://localhost:3000/showStatus/${propertyId}`);
+        const status=await response.json();
+        console.log("statestatusaction",status.state);
+        commit('SET_STATUS',status);
+        return status;
+      }catch(error){
+        console.log(error);
+      }
+    }
 }

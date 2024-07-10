@@ -101,8 +101,8 @@ exports.addProof = async (req, res) => {
       const insertImageQuery = 'INSERT INTO proofworkimage (proofdataid, image) VALUES (?, ?)';
 
         for (const file of descriptionFiles) {
-          con.promise().query(insertImageQuery, [proofworkid, file.path]);
-          console.log(`Inserted image with path: ${file.path} for proofworkid: ${proofworkid}`);
+          con.promise().query(insertImageQuery, [proofworkid, file.filename]);
+          console.log(`Inserted image with path: ${file.filename} for proofworkid: ${proofworkid}`);
         }
 
     }
@@ -113,7 +113,6 @@ exports.addProof = async (req, res) => {
     res.status(500).json({ error: 'Failed to add proof data' });
   }
 };
-
 
 
 exports.getComments = async (req, res) => {
@@ -132,6 +131,7 @@ console.log(propertyId);
     res.status(500).json({ error: 'Failed to fetch comments' });
   }
 };
+
 
 
 
@@ -169,15 +169,6 @@ ORDER BY
 
 
 
-
-
-
-
-
-
-
-const con = require("../config/config");
-
 exports.submitEstimate = async (req, res) => {
     const { propertyid, estimate, time } = req.body;
     const contractorid = req.userid;
@@ -185,7 +176,7 @@ exports.submitEstimate = async (req, res) => {
     try {
         // Insert the estimate into contractorwork table
         const submitEstimateQuery = `
-            INSERT INTO contractorwork (propertyid, estimate, time, contractorid) 
+            INSERT INTO contractorwork (propertyid, estimate, time, contactorid) 
             VALUES (?, ?, ?, ?);
         `;
         await con.execute(submitEstimateQuery, [propertyid, estimate, time, contractorid]);
@@ -230,3 +221,54 @@ exports.submitEstimate = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
+
+
+
+// router.post('/contractChat/:propertyid',contractChat)
+exports.contractChat = async (req, res) => {
+  const propertyId  = req.params.propertyid;
+  try {
+         const [owner] = await con.promise().query(
+             'SELECT u.userid, u.name FROM users u JOIN property p ON u.userid = p.userid WHERE p.propertyid = ?',
+             [propertyId]
+         );
+         res.json(owner[0]);
+     } catch (error) {
+         console.error('Error fetching property owner:', error);
+         res.status(500).json({ error: 'Internal server error' });
+     }
+};
+// router.post('/chat/message',authenticate,sendChat)
+exports.sendChat = async (req, res) => {
+    const sender_id=req.userid
+    const { receiver_id, message,propertyid} = req.body;
+   console.log("message for user=========",message)
+   console.log("message for receibver=========",receiver_id)
+    try {
+        const [send]=await con.promise().query(
+            'INSERT INTO chat_message (propertyid,senderid, receiverid, message) VALUES (?,?, ?, ?)',
+            [propertyid,sender_id, receiver_id, message]
+        );
+        res.status(201).json({ message: 'Message sent successfully',send });
+    } catch (error) {
+        console.error('Error sending message:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
+// router.get('/chat/show/:propertyid',seeMessage)
+
+
+exports.seeMessage=async(req,res)=>{
+  const propertyId  = req.params.propertyid;
+  console.log("object",propertyId);
+  try{
+    const [messages] = await con.promise().query(
+      `SELECT * FROM chat_message WHERE propertyid = ?`,
+      [propertyId]
+    );
+    res.json(messages);
+  }catch(error){
+    console.log("error while fetching the message",error);
+  }
+}

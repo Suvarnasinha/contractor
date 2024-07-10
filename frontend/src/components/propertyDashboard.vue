@@ -9,10 +9,11 @@
             <v-card-title>{{ property.name }}</v-card-title>
             <v-card-subtitle>{{ property.address }}</v-card-subtitle>
             <v-card-text>{{ property.description }}</v-card-text>
-            <v-card-text>{{ property.propertyid }}</v-card-text>
+            <!-- <v-card-text>{{ property.propertyid }}</v-card-text> -->
             <v-card-actions>
               <v-btn color="primary" @click="showWork(property.propertyid)">Show All Work</v-btn>
               <v-btn color="secondary" @click="status(property.propertyid)">Show Status</v-btn>
+              <v-btn color="info" @click="showContractors(property.propertyid)">Chat</v-btn>
             </v-card-actions>
           </v-card>
         </v-col>
@@ -47,6 +48,13 @@ const showWork = (propertyid) => {
 const status = (propertyid) => {
   router.push({
     name: 'showStatus',
+    params: { propertyid }
+  });
+};
+
+const showContractors = (propertyid) => {
+  router.push({
+    name: 'PropertyChatPeople',
     params: { propertyid }
   });
 };

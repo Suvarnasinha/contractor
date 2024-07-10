@@ -43,7 +43,7 @@ const getdata = async () => {
   const validateData=await v$.value.$validate()
   if(validateData){
     console.log("email:",emailData.value,"password:",password.value)
-  await store.dispatch('login', { email: emailData.value, password: password.value });
+    await store.dispatch('login', { email: emailData.value, password: password.value });
   }
 }
 </script>

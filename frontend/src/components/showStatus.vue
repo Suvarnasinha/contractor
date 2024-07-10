@@ -1,43 +1,36 @@
 <template>
   <div class="status-container">
     <h2>Property Status</h2>
-    <div v-if="propertyState" class="status-box">
-      <p><strong>Status:</strong> {{ propertyState.state }}</p>
+    <!-- <div v-if="propertyState" > -->
+      <div v-for="state in propertyState" :key="state" class="status-box">
+
+      <p><strong>Status:</strong> {{ state.state }}</p>
     </div>
     <v-btn color="primary" @click="goBack">Back</v-btn>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-// import { useStore } from 'vuex';
 
-// const store = useStore();
+import { computed, onMounted } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { useStore } from 'vuex';
+
+const store = useStore();
 const router = useRouter();
 const route = useRoute();
 
-const propertyState = ref(null);
+const propertyState = computed(() => store.state.property.status);
 
 const fetchPropertyState = async () => {
   const propertyId = route.params.propertyid;
-  try {
-    const response = await fetch(`http://localhost:3000/showStatus`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ propertyid: propertyId })
-    });
-    const data = await response.json();
-    propertyState.value = data[0]; // Assuming only one state record per property
-  } catch (error) {
-    console.error('Error fetching property status:', error);
-  }
+  console.log("propertyyyy",propertyId)
+  await store.dispatch('propertyStatus',propertyId)
+  
 };
 
 const goBack = () => {
-  router.push({ name: 'properties' }); // Adjust route name based on your setup
+  router.push({ name: 'propertyDashboard' }); 
 };
 
 onMounted(fetchPropertyState);

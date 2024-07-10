@@ -1,6 +1,5 @@
-<!-- PropertiesWithAcceptedEstimates.vue -->
 <template>
-  <div>
+  <div class="property-container">
     <h2>Properties with Accepted Estimates</h2>
     <ul>
       <li v-for="property in properties" :key="property.propertyid">
@@ -47,5 +46,39 @@ const navigateToAddProof = (propertyId) => {
 </script>
 
 <style scoped>
-/* Add your scoped styles here */
+.property-container {
+  padding: 20px;
+  background-color: #f9f9f9;
+  color: #333;
+}
+
+.property-container h2 {
+  margin-bottom: 20px;
+}
+
+.property-container ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.property-container li {
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  padding: 15px;
+}
+
+.property-container h3 {
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.property-container p {
+  margin: 5px 0;
+}
+
+.property-container v-btn {
+  margin-top: 10px;
+}
 </style>

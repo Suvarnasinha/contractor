@@ -1,4 +1,6 @@
 export const state={
    email:'',
-   role:''
+   role:'',
+   token:"",
+   LogIn: false,
 }

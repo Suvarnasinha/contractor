@@ -7,18 +7,19 @@ const dataRoutes = require("./router/router.js")
 const router = express.Router();
 var cors = require('cors')
 const cookieParser = require('cookie-parser');
-
+const path = require('path');
 
 app.use(cookieParser());
 var corsOptions = {
   origin:'http://localhost:8081',
   credentials: true };
   app.use(cors(corsOptions));
+  console.log("crs",corsOptions)
 require('dotenv').config();
 app.set("view engine", "ejs");
 router.use(express.json())
 app.use("/", dataRoutes);
-
+app.use(express.static(path.join(__dirname,('public'))))
 
 app.listen(process.env.PORT || 3000, () => {
   console.log("Running at Port 3000");
