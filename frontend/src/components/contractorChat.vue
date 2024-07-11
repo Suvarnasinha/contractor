@@ -2,7 +2,7 @@
   <div class="chat-container">
     <h1 class="chat-header">Chat with {{ owner.name }}</h1>
     <div class="chat-messages">
-      <div v-for="message in messages" :key="message.message_id">
+      <div v-for="message in messages" :key="message.message_id" :class="messageClass(message)">
         <div class="message-text">{{ message.message }}</div>
       </div>
     </div>
@@ -15,10 +15,14 @@
   
    <script setup>
    import { onMounted, ref } from 'vue';
-
    import { useRouter } from 'vue-router';
-  
+   import io from 'socket.io-client';
 
+
+
+
+   const socket = io('http://localhost:3000')
+console.log("socket",socket);
    const router = useRouter();
   
    const propertyid = router.currentRoute.value.params.propertyid;
@@ -28,10 +32,12 @@
    const owner = ref({});
    const messages = ref([]);
    const newMessage = ref('');
-  
    onMounted(() => {
      fetchOwnerData();
      fetchMessages();
+       socket.on('receiveMessage', (message) => {
+       messages.value.push(message);
+  });
    });
   
    const fetchOwnerData = async () => {
@@ -58,6 +64,16 @@
    };
   
    const sendMessage = async () => {
+     const message = {
+    receiver_id: ownerid,
+    message: newMessage.value,
+    propertyid: propertyid
+  };
+  console.log("socketmessagecommitcontractorside",newMessage.value)
+
+  socket.emit('sendMessage', message);
+  messages.value.push(message);
+  
      try {
        await fetch('http://localhost:3000/chat/message', {
          method: 'POST',
@@ -72,7 +88,21 @@
      } catch (error) {
        console.error('Error sending message:', error);
      }
-   };
+    }
+
+   const messageClass = (message) => ({
+  'message-sender': isSender(message),
+  'message-receiver':!isSender(message)
+});
+const isSender = (message) => {
+  console.log("serderid",message.senderid)
+  console.log("ownerid",ownerid);
+  const arya=message.senderid == ownerid;
+  console.log("asrya",arya)
+  return message.senderid == ownerid;
+};
+
+
    </script>
    <style scoped>
    .chat-container {
@@ -91,34 +121,33 @@
   }
   
   .chat-messages {
-    flex: 1;
+    display: flex;
+    flex-direction: column;
     overflow-y: auto;
     padding: 16px;
-    border: 1px solid #584444;
-    background-color: #eef1f1;
-    border-radius: 8px;
   }
   
-  .message-sender {
-    text-align: right;
-    background-color: #e1ffc7;
-    margin: 8px 0;
-    padding: 8px;
-    border-radius: 8px;
-    max-width: 70%;
-    align-self: flex-end;
-  }
-  
-  .message-receiver {
-    text-align: left;
-    background-color: #f0f0f0;
-    margin: 8px 0;
-    padding: 8px;
-    border-radius: 8px;
-    max-width: 70%;
-    align-self: flex-start;
-  }
-  
+.message-sender {
+  align-self: flex-start;
+  clear: both;
+  background-color: #0d3054;
+  color: white;
+  border-radius: 8px;
+  padding: 8px;
+  margin-bottom: 8px;
+
+}
+
+.message-receiver {
+  align-self: flex-end;
+  clear: both;
+  background-color: #f0f0f0;
+  color: #333;
+  border-radius: 8px;
+  padding: 8px;
+  margin-bottom: 8px;
+  max-width: 70%;
+}
   .message-text {
     font-size: 1em;
   }

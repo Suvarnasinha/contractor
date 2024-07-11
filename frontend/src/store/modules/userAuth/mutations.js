@@ -7,11 +7,13 @@ export const mutations = {
   SET_USERDETAIL(state, payload) {
     console.log("payload",payload);
     state.email = payload.email;
-    state.role=payload.role
+    state.userid=payload.id;
+    state.role=payload.role;
     state.token = payload.token;
     localStorage.setItem("token",payload.token);
     localStorage.setItem("role",payload.role)
     state.LogIn=true
+    console.log("userid of users is:",state.userid);
     console.log("the mutation data for user",state.email)
     console.log("the mutation data for user role",state.role)
   },

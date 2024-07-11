@@ -4,7 +4,8 @@
     <div v-if="contractors.length === 0">No contractors have sent messages yet.</div>
     <div v-else class="contractors-list">
       <div v-for="contractor in contractors" :key="contractor.contractorid" class="contractor-item">
-        <span>{{ contractor.username }}</span>
+        <span>{{ contractor.name }}(contractor)</span>
+        <span>{{contractor.contractorid}}</span>
         <v-btn @click="initiateChat(contractor.contractorid)">Chat</v-btn>
       </div>
     </div>
@@ -18,6 +19,7 @@ import { useRoute, useRouter } from 'vue-router';
 const route = useRoute();
 const router = useRouter();
 const propertyid = route.params.propertyid;
+console.log("propertytytytytytytytyty",propertyid)
 const contractors = ref([]);
 
 onMounted(() => {
@@ -28,16 +30,37 @@ const fetchContractors = async () => {
   try {
     const response = await fetch(`http://localhost:3000/chat/property/${propertyid}`);
     contractors.value = await response.json();
+    console.log("object",contractors.value);
   } catch (error) {
     console.error('Error fetching contractors:', error);
   }
 };
 
-const initiateChat = (contractorid) => {
-  router.push({
-    name: 'PropertyOwnerChatDetail',
-    params: { propertyid, contractorid }
-  });
+
+
+const initiateChat = async(contractorid) => {
+  // alert(propertyid)
+  // router.push({
+  //   name: 'propertyChat',
+  //   params: { propertyid, , }
+  // });
+
+
+  try{
+const response = await fetch(`http://localhost:3000/contractChat/${propertyid}`, {
+              method: 'POST',
+            });
+  const owner= await response.json();
+  const owneridData= owner.userid
+  console.log("ownerid12",owneridData);
+    router.push({ 
+      name: 'propertyChat',
+     params: { propertyid,owneridData,contractorid }
+    });
+} catch (error) {
+    console.error('Error fetching property owner:', error);
+  }
+
 };
 </script>
 

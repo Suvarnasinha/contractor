@@ -1,17 +1,25 @@
-<!-- <template>
+<template>
   <v-app v-if="LogIn">
   <Header />
   </v-app>
-  <v-btn text to="/">
-    Registration
-  </v-btn>
-  <v-btn text to="/login">
-    Login
-  </v-btn>
-  <v-btn text to="/forgetPassword">
-    FORGET Password
-  </v-btn>
-  <router-view></router-view>
+  <v-app v-if="!LogIn">
+    <v-app-bar app>
+      <v-toolbar-title>ProCon</v-toolbar-title>
+      <v-spacer></v-spacer>
+      <v-btn text to="/register">
+        Registration
+      </v-btn>
+    
+      <v-btn text to="/">
+        Login
+      </v-btn>
+      <v-btn text to="/forgetPassword">
+        Forget Password
+      </v-btn>
+     
+    </v-app-bar>
+  <router-view />
+  </v-app>
 </template>
 
 <script setup>
@@ -33,10 +41,10 @@ onMounted(()=>{
   }
 })
 </script>
- -->
 
 
 
+<!-- 
  <template>
   <v-app>
     <Header v-if="isLoggedIn" />
@@ -70,4 +78,4 @@ if (localStorage.getItem("token")) {
     role: localStorage.getItem("role"),
   });
 }
-</script>
+</script> -->

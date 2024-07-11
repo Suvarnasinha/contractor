@@ -1,6 +1,6 @@
-<!-- <template>
+<template>
   <div class="chat-container">
-    <h1 class="chat-header">Chat with {{ owner.name }}</h1>
+    <h1 class="chat-header">Chat with {{ ownerid }}</h1>
     <div class="chat-messages">
       <div v-for="message in messages" :key="message.message_id" :class="messageClass(message)">
         <div class="message-text">{{ message.message }}</div>
@@ -15,24 +15,29 @@
 
 <script setup>
 import { onMounted, ref } from 'vue';
-import { useRouter } from 'vue-router';
-import { useStore } from 'vuex';
+import { useRouter,useRoute } from 'vue-router';
+import { io } from 'socket.io-client';
+// import { useStore } from 'vuex';
 
-const store = useStore();
+// const store = useStore();
 const router = useRouter();
+const route = useRoute();
 const propertyid = router.currentRoute.value.params.propertyid;
-const ownerid = router.currentRoute.value.params.ownerid;
+const ownerid = route.params.contractorid;
+console.log("ownerdataqqqq11111111",route.params.owneridData)
+
 
 const owner = ref({});
 const messages = ref([]);
 const newMessage = ref('');
-const currentUserId = ref(null); // Assuming you set this after login or fetch user data
-
+const socket = io('http://localhost:3000');
+console.log("socket",socket);
 onMounted(() => {
   fetchOwnerData();
   fetchMessages();
-  // Example: Fetch currentUserId after login or fetch user data
-  currentUserId.value = store.state.user.id; // Example: Adjust according to your Vuex state structure
+  socket.on('receiveMessage', (message) => {
+   messages.value.push(message);
+  });
 });
 
 const fetchOwnerData = async () => {
@@ -58,6 +63,16 @@ const fetchMessages = async () => {
 };
 
 const sendMessage = async () => {
+  const message = {
+    receiver_id: ownerid,
+    message: newMessage.value,
+    propertyid: propertyid
+  };
+  console.log("socketmessagecommit",newMessage.value)
+  socket.emit('sendMessage', message);
+  messages.value.push(message);
+
+
   try {
     await fetch('http://localhost:3000/chat/message', {
       method: 'POST',
@@ -76,16 +91,22 @@ const sendMessage = async () => {
   } catch (error) {
     console.error('Error sending message:', error);
   }
-};
+  };
 
 const messageClass = (message) => ({
   'message-sender': isSender(message),
-  'message-receiver': !isSender(message)
+  'message-receiver':!isSender(message)
 });
-
 const isSender = (message) => {
-  return message.sender_id === currentUserId.value;
+  console.log("serderid",message.senderid)
+  console.log("ownerid",ownerid);
+  const arya=message.senderid == ownerid;
+  console.log("asrya",arya)
+  return message.senderid == ownerid;
 };
+
+
+console.log("ISsENDERT",isSender);
 </script>
 
 <style scoped>
@@ -105,7 +126,8 @@ const isSender = (message) => {
 }
 
 .chat-messages {
-  flex: 1;
+  display: flex;
+  flex-direction: column;
   overflow-y: auto;
   padding: 16px;
 }
@@ -117,7 +139,7 @@ const isSender = (message) => {
   border-radius: 8px;
   padding: 8px;
   margin-bottom: 8px;
-  max-width: 70%;
+
 }
 
 .message-receiver {
@@ -133,7 +155,7 @@ const isSender = (message) => {
 .message-text {
   font-size: 1em;
 }
-  
+ 
 .chat-input {
   display: flex;
   align-items: center;
@@ -144,7 +166,7 @@ const isSender = (message) => {
   margin-top: 8px;
 }
 
-.input-textarea {
+.input-textarea { 
   flex: 1;
   resize: none;
   padding: 8px;
@@ -154,7 +176,7 @@ const isSender = (message) => {
 }
 
 .send-button {
-  background-color: #0d3054;
+  background-color: #3b81fb;
   color: white;
   border: none;
   padding: 8px 16px;
@@ -165,7 +187,7 @@ const isSender = (message) => {
 .send-button:hover {
   background-color: #3f6ea1;
 }
-</style> -->
+</style>  
 
 
 
@@ -176,22 +198,9 @@ const isSender = (message) => {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-<template>
+<!-- <template>
   <div class="chat-container">
-    <h1 class="chat-header">Chat with {{ contractor.name }}</h1>
+    <h1 class="chat-header">Chat with {{ ownerid }}</h1>
     <div class="chat-messages">
       <div v-for="message in messages" :key="message.message_id" :class="messageClass(message)">
         <div class="message-text">{{ message.message }}</div>
@@ -206,47 +215,58 @@ const isSender = (message) => {
 
 <script setup>
 import { onMounted, ref } from 'vue';
-import { useRouter } from 'vue-router';
-import { useStore } from 'vuex';
+import { useRouter, useRoute } from 'vue-router';
+import { io } from 'socket.io-client';
 
-const store = useStore();
 const router = useRouter();
-const propertyid = router.currentRoute.value.params.propertyid;
-const contractorid = router.currentRoute.value.params.contractorid;
+const route = useRoute();
+const propertyid = route.params.propertyid;
+const ownerid = route.params.contractorid; // The ID of the person to chat with
+const owneridData = route.params.owneridData; // The ID of the current user
 
-const contractor = ref({});
+const owner = ref({});
 const messages = ref([]);
 const newMessage = ref('');
-const currentUserId = ref(null); // Assuming you set this after login or fetch user data
+const socket = io('http://localhost:3000');
 
 onMounted(() => {
-  fetchContractorData();
+  fetchOwnerData();
   fetchMessages();
-  // Example: Fetch currentUserId after login or fetch user data
-  currentUserId.value = store.state.user.id; // Example: Adjust according to your Vuex state structure
+  socket.on('receiveMessage', (message) => {
+    messages.value.push(message);
+  });
 });
 
-const fetchContractorData = async () => {
+const fetchOwnerData = async () => {
   try {
-    const response = await fetch(`http://localhost:3000/contractor/${contractorid}`);
-    contractor.value = await response.json();
-    console.log("Contractor:", contractor.value);
+    const response = await fetch(`http://localhost:3000/contractChat/${propertyid}`, {
+      method: 'POST',
+    });
+    owner.value = await response.json();
   } catch (error) {
-    console.error('Error fetching contractor:', error);
+    console.error('Error fetching property owner:', error);
   }
 };
 
 const fetchMessages = async () => {
   try {
-    const response = await fetch(`http://localhost:3000/chat/show/${propertyid}/${contractorid}`);
+    const response = await fetch(`http://localhost:3000/chat/show/${propertyid}`);
     messages.value = await response.json();
-    console.log("Messages:", messages.value);
   } catch (error) {
     console.error('Error fetching messages:', error);
   }
 };
 
 const sendMessage = async () => {
+  const message = {
+    receiver_id: ownerid,
+    senderid: owneridData,
+    message: newMessage.value,
+    propertyid: propertyid
+  };
+  socket.emit('sendMessage', message);
+  messages.value.push(message);
+
   try {
     await fetch('http://localhost:3000/chat/message', {
       method: 'POST',
@@ -254,27 +274,18 @@ const sendMessage = async () => {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({
-        receiver_id: contractorid,
-        message: newMessage.value,
-        propertyid: propertyid
-      })
+      body: JSON.stringify(message)
     });
     newMessage.value = '';
-    fetchMessages();
   } catch (error) {
     console.error('Error sending message:', error);
   }
 };
 
-const messageClass = (message) => ({
-  'message-sender': isSender(message),
-  'message-receiver': !isSender(message)
-});
-
-const isSender = (message) => {
-  return message.sender_id === currentUserId.value;
+const messageClass = (message) => {
+  return message.senderid === owneridData ? 'message-sender' : 'message-receiver';
 };
+
 </script>
 
 <style scoped>
@@ -294,22 +305,13 @@ const isSender = (message) => {
 }
 
 .chat-messages {
-  flex: 1;
+  display: flex;
+  flex-direction: column;
   overflow-y: auto;
   padding: 16px;
 }
 
 .message-sender {
-  align-self: flex-start;
-  background-color: #0d3054;
-  color: white;
-  border-radius: 8px;
-  padding: 8px;
-  margin-bottom: 8px;
-  max-width: 70%;
-}
-
-.message-receiver {
   align-self: flex-end;
   background-color: #f0f0f0;
   color: #333;
@@ -319,10 +321,20 @@ const isSender = (message) => {
   max-width: 70%;
 }
 
+.message-receiver {
+  align-self: flex-start;
+  background-color: #0d3054;
+  color: white;
+  border-radius: 8px;
+  padding: 8px;
+  margin-bottom: 8px;
+  max-width: 70%;
+}
+
 .message-text {
   font-size: 1em;
 }
-  
+
 .chat-input {
   display: flex;
   align-items: center;
@@ -343,7 +355,7 @@ const isSender = (message) => {
 }
 
 .send-button {
-  background-color: #0d3054;
+  background-color: #3b81fb;
   color: white;
   border: none;
   padding: 8px 16px;
@@ -354,4 +366,4 @@ const isSender = (message) => {
 .send-button:hover {
   background-color: #3f6ea1;
 }
-</style>
+</style> -->

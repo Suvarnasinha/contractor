@@ -13,8 +13,10 @@
     "@vuelidate/validators": "^2.0.4",
     "core-js": "^3.8.3",
     "roboto-fontface": "*",
+    "socket.io-client": "^4.7.5",
     "vue": "^3.2.13",
     "vue-router": "^4.0.13",
+    "vue-socket.io": "github:MetinSeylan/Vue-Socket.io",
     "vuetify": "^3.0.0-beta.0",
     "vuex": "^4.0.2",
     "webfontloader": "^1.0.0"

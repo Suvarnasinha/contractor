@@ -1,0 +1,104 @@
+create database property_contractor;
+use property_contractor;
+CREATE TABLE `property_contractor`.`users` (
+  `userid` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(225) NOT NULL,
+  `email` VARCHAR(225) NOT NULL,
+  `phonenumber` VARCHAR(45) NOT NULL,
+  `address` VARCHAR(225) NULL,
+  `usertype` VARCHAR(225)NOT NULL,
+  `password` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`userid`));
+
+CREATE TABLE `property_contractor`.`property` (
+  `propertyid` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(225) NOT NULL,
+  `address` VARCHAR(225) NOT NULL,
+  `description` VARCHAR(225) NULL,
+  `userid` INT NULL,
+  PRIMARY KEY (`propertyid`),
+  FOREIGN KEY (`userid`) REFERENCES `users`(`userid`));
+
+CREATE TABLE `property_contractor`.`work` (
+  `workid` INT NOT NULL AUTO_INCREMENT,
+  `propertyid` INT NOT NULL,
+  `complete` TINYINT NULL,
+  PRIMARY KEY (`workid`),
+  FOREIGN KEY(`propertyid`) REFERENCES `property`(`propertyid`));
+ 
+  CREATE TABLE `property_contractor`.`workdeatil` (
+  `workdetailid` INT NOT NULL AUTO_INCREMENT,
+  `workid` INT NOT NULL,
+  `description` VARCHAR(225) NOT NULL,
+  PRIMARY KEY (`workdetailid`),
+  FOREIGN KEY(`workid`) REFERENCES `work`(`workid`));
+  
+  CREATE TABLE `property_contractor`.`workimage` (
+  `workimageid` INT NOT NULL AUTO_INCREMENT,
+  `image` VARCHAR(45) NOT NULL,
+  `workdetailid` INT not NULL,
+  PRIMARY KEY (`workimageid`),
+ FOREIGN KEY(`workdetailid`)REFERENCES `workdeatil`(`workdetailid`) );
+
+  
+  CREATE TABLE `property_contractor`.`workcontractor` (
+  `workcontractor` INT NOT NULL AUTO_INCREMENT,
+  `workid` INT NULL,
+  `contactorid` INT NULL,
+  PRIMARY KEY (`workcontractor`),
+   FOREIGN KEY(`workid`) REFERENCES `work`(`workid`),
+    FOREIGN KEY(`contactorid`) REFERENCES `users`(`userid`));
+
+CREATE TABLE `property_contractor`.`contractorwork` (
+`contractorworkid` INT NOT NULL AUTO_INCREMENT,
+`workid` VARCHAR(45) NOT NULL,
+`estimate` VARCHAR(45) NOT NULL,
+`time` VARCHAR(45) NULL,
+`contactorid` INT,
+PRIMARY KEY (`contractorworkid`),
+FOREIGN KEY(`contactorid`) REFERENCES `users`(`userid`));
+   
+   
+CREATE TABLE `property_contractor`.`proofwork` (
+  `proofworkid` INT NOT NULL AUTO_INCREMENT,
+  `propertyid` INT NOT NULL,
+   `description` VARCHAR(255) NOT NULL,
+  PRIMARY KEY (`proofworkid`),
+  FOREIGN KEY(`propertyid`) REFERENCES `property`(`propertyid`));
+  
+
+CREATE TABLE `property_contractor`.`proofworkimage` (
+  `proofdataimageid` INT NOT NULL AUTO_INCREMENT,
+  `proofdataid` INT NOT NULL,
+  `image` VARCHAR(255) NOT NULL,
+  PRIMARY KEY (`proofdataimageid`),
+   FOREIGN KEY(`proofdataid`) REFERENCES `proofwork`(`proofworkid`));
+
+CREATE TABLE `property_contractor`.`comment` (
+  `commentid` INT NOT NULL AUTO_INCREMENT,
+  `proofworkid` INT NOT NULL,
+  `comment` VARCHAR(255) NOT NULL,
+  PRIMARY KEY (`commentid`),
+  FOREIGN KEY(`proofworkid`) REFERENCES `proofwork`(`proofworkid`));
+  
+git   
+  ALTER TABLE `property_contractor`.`work` 
+ADD COLUMN `accept` VARCHAR(45) NULL AFTER `complete`;
+
+
+
+
+
+
+CREATE TABLE `property_contractor`.`propertystate` (
+  `propertystate` INT NOT NULL AUTO_INCREMENT,
+  `propertyId` INT NULL,
+  `state` VARCHAR(45) NULL,
+  PRIMARY KEY (`propertystate`),
+  INDEX `fk_propertystate_1_idx` (`propertyId` ASC) VISIBLE,
+  CONSTRAINT `fk_propertystate_1`
+    FOREIGN KEY (`propertyId`)
+    REFERENCES `property_contractor`.`property` (`propertyid`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+

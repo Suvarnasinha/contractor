@@ -352,11 +352,10 @@ try{
 exports.seechatperson=async(req,res)=>{
   const propertyid = req.params.propertyid;
   try {
-    const query = `
-      SELECT DISTINCT u.userid, u.name
-      FROM chat_message cm
-      JOIN users u ON cm.senderid = u.userid
-      WHERE cm.propertyid = ?`;
+    const query = `SELECT DISTINCT u.userid as contractorid,u.name
+    FROM chat_message cm
+    JOIN users u ON cm.senderid = u.userid
+    WHERE cm.propertyid = 35 and u.usertype=1`;
     const [contractors] = await con.promise().query(query, [propertyid]);
     res.json(contractors);
   } catch (error) {
@@ -364,3 +363,31 @@ exports.seechatperson=async(req,res)=>{
     res.status(500).json({ error: error.message });
   }
 }
+
+
+
+
+
+
+
+
+/////
+// exports.getProofDataForOwner = async (req, res) => {
+//   const userid = req.userid;
+
+//   try {
+//     const [proofData] = await con.promise().query(
+//       `SELECT DISTINCT p.propertyid, p.name AS property_name, u.name AS contractor_name, u.email AS contractor_email
+//       FROM property p
+//       INNER JOIN proofwork pw ON p.propertyid = pw.propertyid
+//       INNER JOIN workcontractor wc ON pw.propertyid = wc.workid
+//       INNER JOIN users u ON wc.contractorid = u.userid
+//       WHERE p.userid = ?`,
+//       [userid]
+//     );
+//     res.json(proofData);
+//   } catch (error) {
+//     console.log('Error fetching proof data for owner:', error);
+//     res.status(500).json({ error: 'Failed to fetch proof data for owner' });
+//   }
+// };

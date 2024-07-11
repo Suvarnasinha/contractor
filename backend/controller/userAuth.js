@@ -48,7 +48,7 @@ exports.login=async(req,res)=>{
     const token=jwt.sign({id:id},secretKey,{ expiresIn: "3h" })
     res.cookie("token", token, { httpOnly: true , secure:false});
     console.log("token", token);
-    res.json({ password,email,token,role});
+    res.json({ password,email,token,role,id});
     }
   } catch (error) {
     res.json({ error: error.message });

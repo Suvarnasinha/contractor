@@ -72,7 +72,6 @@ const register = async () => {
   const isValid = await v$.value.$validate();
   if (isValid) {
     try {
-      // Convert user type to integer before storing
       const userTypeValue = formData.usertype === 'Property' ? 0 : 1;
 
       await store.dispatch('register', {

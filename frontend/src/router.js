@@ -21,17 +21,20 @@ import showStatus from './components/showStatus.vue'
 import showWork from './components/showWork.vue'
 import contractorChat from './components/contractorChat.vue'
 import showWorkContractor from './components/showWorkContractor.vue'
+import PropertyChatPeople from './components/PropertyChatPeople.vue'
+import propertyChat from './components/propertyChat.vue'
+
 import {store} from './store'
 
 const routes = [
   {
     name:'Registration',
-    path: '/',
+    path: '/register',
     component: registration,
   },
   {
     name:'Login',
-    path: '/login',
+    path: '/',
     component: Login,
   },
   {
@@ -150,6 +153,16 @@ const routes = [
     name:'showWorkContractor',
     path:'/showWorkContractor',
     component:showWorkContractor
+  },
+  {
+    name:'PropertyChatPeople',
+    path:'/PropertyChatPeople',
+    component:PropertyChatPeople
+  },
+  {
+    name:'propertyChat',
+    path:'/propertyChat',
+    component:propertyChat
   }
 ];
 
@@ -157,27 +170,6 @@ export const router = createRouter({
   history: createWebHistory(),
   routes,
 })
-
-// router.beforeEach((to, from, next) => {
-//   if (to.name == 'Login'){
-//    next();
-//   }
-
-// else{
-//   if(store.getters.getToken){
-//     console.log("token has been set ")
-//     next()
-//   }
-//   else{
-//     console.log("go to login");
-//     next({ path: '/'})
-//   }
-// }
-// })  
-
-
-
-
 router.beforeEach((to, from, next) => {
   if (
     to.name == "Login" || to.name == "Registration" || to.name == "forgetPassword" ) {
@@ -187,7 +179,7 @@ router.beforeEach((to, from, next) => {
     if (!store.state.userAuth.LogIn) {
       console.log("object");
       console.log("data store here login",store.state.userAuth.LogIn);
-      next({ path: "/login" });
+      next({ path: "/" });
     } else {
       next();
     }

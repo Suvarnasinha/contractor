@@ -42,6 +42,16 @@ const fetchContProperties = async () => {
 
 onMounted(fetchContProperties);
 
+const currentUserId = computed(() => {
+  console.log(store.state.userAuth.userid);
+return store.state.userAuth.email; 
+});
+console.log("123");
+console.log("currentUserId",currentUserId.value);
+console.log("12ds3");
+
+
+
 const properties = computed(() =>  {
   console.log("store.state.contractor.property:::",store.state.contractor.property);
   return store.state.contractor.property
@@ -73,7 +83,7 @@ const response = await fetch(`http://localhost:3000/contractChat/${propertyid}`,
   const owner= await response.json();
   const ownerid= owner.userid
   console.log("ownerid12",ownerid);
-    router.push({
+    router.push({ 
       name: 'contractorChat',
      params: { propertyid,ownerid }
     });
