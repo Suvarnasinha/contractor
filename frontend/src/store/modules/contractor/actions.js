@@ -50,7 +50,21 @@ export const actions={
       console.error('Error fetching properties:', error);
       
     }
-  }
+  },
+
+
+  async fetchPaymentDetails({ commit }) {
+    try {
+      const response = await fetch('http://localhost:3000/getPayment',{
+        credentials:"include"
+
+      });
+      const paymentDetails = await response.json();
+      commit('SET_PAYMENT_DETAIL', paymentDetails);
+    } catch (error) {
+      console.error('Error fetching payment details:', error);
+    }
+  },
 
   
 }

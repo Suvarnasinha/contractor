@@ -8,7 +8,6 @@
           <v-card-subtitle>Estimate: {{ estimate.estimate }}</v-card-subtitle>
           <v-card-text>
             <div>Time: {{ estimate.time }}</div>
-            <div>Description: {{ estimate.work_description }}</div>
             <input type="hidden" name="hello" value="estimate">
           </v-card-text>
           <v-btn color="primary" @click="acceptEstimate(estimate.contractor_id, estimate.contractorworkid)">Accept</v-btn>
@@ -70,7 +69,6 @@ const acceptEstimate = async (contractor_id, contractorworkid) => {
 .v-card-title {
   font-weight: bold;
 }
-
 .v-btn {
   margin-top: 10px;
 }

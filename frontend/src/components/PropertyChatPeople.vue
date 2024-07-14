@@ -5,8 +5,8 @@
     <div v-else class="contractors-list">
       <div v-for="contractor in contractors" :key="contractor.contractorid" class="contractor-item">
         <span>{{ contractor.name }}(contractor)</span>
-        <span>{{contractor.contractorid}}</span>
-        <v-btn @click="initiateChat(contractor.contractorid)">Chat</v-btn>
+        <!-- <span>{{contractor.contractorid}}</span> -->
+        <v-btn @click="initiateChat(contractor.contractorid,contractor.name)">Chat</v-btn>
       </div>
     </div>
   </div>
@@ -34,28 +34,22 @@ const fetchContractors = async () => {
   } catch (error) {
     console.error('Error fetching contractors:', error);
   }
-};
+}; 
 
 
 
-const initiateChat = async(contractorid) => {
-  // alert(propertyid)
-  // router.push({
-  //   name: 'propertyChat',
-  //   params: { propertyid, , }
-  // });
-
-
+const initiateChat = async(contractorid,name) => {
   try{
 const response = await fetch(`http://localhost:3000/contractChat/${propertyid}`, {
               method: 'POST',
             });
   const owner= await response.json();
   const owneridData= owner.userid
-  console.log("ownerid12",owneridData);
+  const owneridName= owner.name
+  console.log("ownerid12",owneridName);
     router.push({ 
       name: 'propertyChat',
-     params: { propertyid,owneridData,contractorid }
+     params: { propertyid,owneridData,name,contractorid }
     });
 } catch (error) {
     console.error('Error fetching property owner:', error);

@@ -10,7 +10,7 @@
           <v-card class="mx-auto my-3 work-card">
             <v-card-title>{{ work.description }}</v-card-title>
             <v-img
-            :src="'http://localhost:3000/'+work.image"
+            :src="'http://localhost:3000/uploads/'+work.image"
               height="200"
               contain
               class="white--text align-end"
@@ -74,7 +74,6 @@ const goBack = () => {
   color: #555;
   font-weight: bold;
 }
-
 .v-btn {
   margin-top: 20px;
 }

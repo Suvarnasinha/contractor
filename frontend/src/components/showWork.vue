@@ -1,20 +1,24 @@
 <template>
   <div class="work-container">
-    <h1>Work Details for Property here</h1>
-    <v-container v-if="workDetails.length === 0" class="no-work-details">
+    <h1>Work Details for Property</h1>
+    <v-container v-if="groupedWorkDetails.length === 0" class="no-work-details">
       <div>No work details available</div>
     </v-container>
     <v-container v-else>
       <v-row>
-        <v-col v-for="(work, index) in workDetails" :key="index" cols="12" md="6">
+        <v-col v-for="(workGroup, index) in groupedWorkDetails" :key="index" cols="12" md="6">
           <v-card class="mx-auto my-3 work-card">
-            <v-card-title>{{ work.description }}</v-card-title>
-            <v-img
-            :src="'http://localhost:3000/uploads/'+work.image"
-              height="200"
-              contain
-              class="white--text align-end"
-            ></v-img>
+            <v-card-title>{{ workGroup.description }}</v-card-title>
+            <div class="image-row">
+              <v-img
+                v-for="(image, imgIndex) in workGroup.images"
+                :key="imgIndex"
+                :src="'http://localhost:3000/uploads/'+image"
+                height="200"
+                contain
+                class="white--text align-end work-image"
+              ></v-img>
+            </div>
           </v-card>
         </v-col>
       </v-row>
@@ -33,6 +37,17 @@ const router = useRouter();
 const route = useRoute();
 
 const workDetails = computed(() => store.state.property.workDetails);
+
+const groupedWorkDetails = computed(() => {
+  const groups = {};
+  workDetails.value.forEach(work => {
+    if (!groups[work.description]) {
+      groups[work.description] = { description: work.description, images: [] };
+    }
+    groups[work.description].images.push(work.image);
+  });
+  return Object.values(groups);
+});
 
 const fetchWorkDetails = async () => {
   const propertyId = route.params.propertyid;
@@ -75,7 +90,18 @@ const goBack = () => {
   font-weight: bold;
 }
 
+.image-row {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.work-image {
+  margin: 5px;
+  max-height: 150px;
+}
+
 .v-btn {
   margin-top: 20px;
 }
 </style>
+

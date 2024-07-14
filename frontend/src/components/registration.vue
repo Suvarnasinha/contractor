@@ -51,11 +51,11 @@ const formData = reactive({
   email: '',
   phonenumber: '',
   address: '',
-  usertype: '', // Will hold '0' for Property and '1' for Contractor
+  usertype: '', 
   password: '',
 });
 
-const userTypes = ['Property', 'Contractor']; // Display options for UserType
+const userTypes = ['Property', 'Contractor']; 
 
 const rules = {
   name: { required: helpers.withMessage('Name cannot be empty', required) },

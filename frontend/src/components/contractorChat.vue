@@ -1,6 +1,7 @@
  <template>
   <div class="chat-container">
     <h1 class="chat-header">Chat with {{ owner.name }}</h1>
+    <button @click="back" class="back-button">Back</button>
     <div class="chat-messages">
       <div v-for="message in messages" :key="message.message_id" :class="messageClass(message)">
         <div class="message-text">{{ message.message }}</div>
@@ -13,7 +14,7 @@
   </div>
    </template>
   
-   <script setup>
+   <script setup> 
    import { onMounted, ref } from 'vue';
    import { useRouter } from 'vue-router';
    import io from 'socket.io-client';
@@ -181,7 +182,14 @@ const isSender = (message) => {
     border-radius: 4px;
     cursor: pointer;
   }
+  .back-button{
+    background-color: #3b81fb;
+    color: white;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    margin-right: 1450px;
   
+  }
   .send-button:hover {
     background-color: #3f6ea1;
   }

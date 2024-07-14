@@ -23,6 +23,10 @@ import contractorChat from './components/contractorChat.vue'
 import showWorkContractor from './components/showWorkContractor.vue'
 import PropertyChatPeople from './components/PropertyChatPeople.vue'
 import propertyChat from './components/propertyChat.vue'
+import payment from './components/payment.vue'
+import paymentDetails from './components/paymentDetails.vue'
+import archiveProperty from './components/archiveProperty.vue'
+import archivedContractor from './components/archivedContractor.vue'
 
 import {store} from './store'
 
@@ -163,7 +167,28 @@ const routes = [
     name:'propertyChat',
     path:'/propertyChat',
     component:propertyChat
+  },
+  {
+    name:'payment',
+    path:'/payment',
+    component:payment
+  },
+  {
+    name:'paymentDetails',
+    path:'/paymentDetails',
+    component:paymentDetails
+  },
+  {
+    name:'archiveProperty',
+    path:'/archiveProperty',
+    component:archiveProperty
+  },
+  {
+    name:'archivedContractor',
+    path:'/archivedContractor',
+    component:archivedContractor
   }
+
 ];
 
 export const router = createRouter({

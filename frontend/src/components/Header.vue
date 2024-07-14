@@ -4,16 +4,18 @@
       <v-toolbar-title>ProCon</v-toolbar-title>
       <v-spacer></v-spacer>
 
-     
       <v-btn v-if="role == 0" text to="/propertyDashboard">
-        propertyDashboard
+        property  Dashboard
       </v-btn>
     
       <v-btn v-if="role == 1" text to="/propertylist">
-        propertylist
+        property List
       </v-btn>
       <v-btn v-if="role == 0" text to="/addproperty">
-        addproperty
+        Add Property
+      </v-btn>
+      <v-btn v-if="role == 0" text to="/showproperty">
+        Add Work
       </v-btn>
       <v-btn v-if="role == 0" text to="/propertyShowEstimate">
         propertyShowEstimate
@@ -25,7 +27,7 @@
         viewProof
       </v-btn>
       <v-btn v-if="role == 1" text to="/propertiesShowComment">
-        propertiesShowComment
+        Comments
       </v-btn>
     </v-app-bar>
     <v-main>

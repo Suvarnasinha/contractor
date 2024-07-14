@@ -59,7 +59,8 @@ exports.proofData=async (req,res)=>{
       FROM property p
       INNER JOIN work w ON p.propertyid = w.propertyid
       INNER JOIN workcontractor wc ON p.propertyid = wc.propertyid
-      WHERE wc.contactorid =?  AND w.accept = 1`,
+      LEFT JOIN payment pay ON p.propertyid = pay.propertyid AND pay.status = 1
+      WHERE wc.contactorid = 2 AND w.accept = 1 AND pay.paymentid IS NULL`,
       [userid]);
       res.json(proofData);
   } catch (error) {
@@ -139,26 +140,15 @@ exports.getCommentProperties=async(req,res)=>{
   const userid = req.userid;
   try {
     const [properties] = await con.promise().query(`
-    SELECT DISTINCT 
-    p.propertyid, 
-    p.name AS property_name, 
-    p.address AS property_address, 
-    pw.propertyid AS propertiesid, 
-    p.description AS property_description
-FROM 
-    property p
-INNER JOIN 
-    proofwork pw ON p.propertyid = pw.propertyid
-INNER JOIN 
-    comment c ON pw.propertyid = c.propertyid
-INNER JOIN 
-    workcontractor wc ON p.propertyid = wc.propertyid
-WHERE 
-    wc.contactorid = ?
-ORDER BY 
-    p.propertyid;
-    
-    `,  [userid]);
+  SELECT DISTINCT p.propertyid, p.name AS property_name, p.address AS property_address, p.description AS property_description
+      FROM property p
+      INNER JOIN proofwork pw ON p.propertyid = pw.propertyid
+      INNER JOIN comment c ON pw.propertyid = c.propertyid
+      INNER JOIN workcontractor wc ON p.propertyid = wc.propertyid
+      LEFT JOIN payment pay ON p.propertyid = pay.propertyid AND pay.status = 1
+      WHERE wc.contactorid = ? AND pay.paymentid IS NULL
+      ORDER BY p.propertyid
+     `,  [userid]);
 
     res.json(properties);
   } catch (error) {
@@ -245,10 +235,10 @@ exports.sendChat = async (req, res) => {
    console.log("message for user=========",message)
    console.log("message for receibver=========",receiver_id)
     try {
-        const [send]=await con.promise().query(
-            'INSERT INTO chat_message (propertyid,senderid, receiverid, message) VALUES (?,?, ?, ?)',
-            [propertyid,sender_id, receiver_id, message]
-        );
+      const [send] = await con.promise().query(
+        'INSERT INTO chat_message (propertyid, senderid, receiverid, message) VALUES (?, ?, ?, ?)',
+        [propertyid, sender_id, receiver_id, message]
+      );
         res.status(201).json({ message: 'Message sent successfully',send });
     } catch (error) {
         console.error('Error sending message:', error);
@@ -264,11 +254,39 @@ exports.seeMessage=async(req,res)=>{
   console.log("object",propertyId);
   try{
     const [messages] = await con.promise().query(
-      `SELECT * FROM chat_message WHERE propertyid = ?`,
-      [propertyId]
+      `SELECT * FROM chat_message 
+       WHERE propertyid = ? AND 
+       (senderid = ? OR receiverid = ?)`,
+      [propertyId, userId, userId]
     );
     res.json(messages);
   }catch(error){
     console.log("error while fetching the message",error);
   }
 }
+
+
+exports.getArchivedPropertiesContractor = async (req, res) => {
+  const contractorId = req.userid;
+  try {
+    const [properties] = await con.promise().query(
+      `SELECT DISTINCT 
+         p.propertyid, 
+         p.name AS property_name, 
+         p.address AS property_address, 
+         p.description AS property_description,
+         cw.estimate
+       FROM property p
+       INNER JOIN work w ON p.propertyid = w.propertyid
+       INNER JOIN workcontractor wc ON p.propertyid = wc.propertyid
+       LEFT JOIN payment pay ON p.propertyid = pay.propertyid AND pay.status = 1
+       LEFT JOIN contractorwork cw ON p.propertyid = cw.propertyid AND wc.contactorid = cw.contactorid
+       WHERE wc.contactorid = ? AND w.accept = 1 AND pay.paymentid IS NOT NULL`,
+      [contractorId]
+    );
+    res.json(properties);
+  } catch (error) {
+    console.error('Error fetching archived properties:', error);
+    res.status(500).json({ error: 'Error fetching archived properties' });
+  }
+};

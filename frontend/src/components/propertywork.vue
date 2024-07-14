@@ -7,7 +7,7 @@
         <v-textarea v-model="work.description" label="Description" required></v-textarea>
       </v-col>
       <v-col cols="12" md="4">
-        Upload 5 images Not less than that and not more than that
+        <!-- Upload 5 images Not less than that and not more than that -->
         <v-file-input
   v-model="work.images"
   label="Upload Image"

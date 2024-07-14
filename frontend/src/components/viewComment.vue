@@ -4,7 +4,7 @@
     <div v-for="(images, description) in groupedProofs" :key="description" class="proof-group">
       <p>{{ description }}</p>
       <div class="image-row">
-        <img v-for="(image, index) in images" :key="index" :src="'http://localhost:3000/'+image" alt="Proof Image" class="proof-image"/>
+        <img v-for="(image, index) in images" :key="index" :src="'http://localhost:3000/uploads/'+image" alt="Proof Image" class="proof-image"/>
       </div>
     </div>
     <h3>Comments</h3>
@@ -55,7 +55,7 @@ const groupedProofs = computed(() => {
   });
   return groups;
 });
-
+// console.log("group",groupedProofs);
 const getPropertyData =()=>{
   // alert(propertyId.value)
   const propertyid=propertyId.value;

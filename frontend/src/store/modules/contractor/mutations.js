@@ -10,5 +10,8 @@ export const mutations={
   FETCH_PROPERTY_COMMENT(state,propertyData){
     state.propertyData=propertyData;
     console.log("the mutation data for user",state.propertyData)
-  }
+  },
+  SET_PAYMENT_DETAIL(state, paymentDetails) {
+    state.paymentDetails = paymentDetails;
+  },
 }

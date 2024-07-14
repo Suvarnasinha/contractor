@@ -12,21 +12,21 @@ const server = require('http').createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server, {
   cors: {
-    origin: 'http://localhost:8080',
+    origin: 'http://localhost:8081',
     credentials:true,
     methods:['GET','POST'],
     transports:['WebSocket','Pooling'],
     allowEIO4:true,
   }
 })
-console.log("io",io)
+// console.log("io",io)
 app.use(cookieParser());
 var corsOptions = {
-  origin:'http://localhost:8080',
+  origin:'http://localhost:8081',
   credentials: true,
  };
   app.use(cors(corsOptions));
-  console.log("crs",corsOptions)
+  // console.log("crs",corsOptions)
 require('dotenv').config();
 app.set("view engine", "ejs");
 router.use(express.json())

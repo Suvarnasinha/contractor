@@ -13,7 +13,6 @@
     </v-list>
   </div>
 </template>
-
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
@@ -27,6 +26,7 @@ const fetchProofs = async () => {
       credentials: "include",
     });
     proofs.value = await response.json();
+    console.log("proofdata:",proofs.value)
   } catch (error) {
     console.error('Error fetching proofs:', error);
   }
