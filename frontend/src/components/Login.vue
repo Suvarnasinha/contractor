@@ -20,13 +20,14 @@
   </v-container>
 </template>
 <script setup>
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { useVuelidate } from '@vuelidate/core'
 import { required, minLength,email } from '@vuelidate/validators'
 import { useStore } from "vuex";
+import { useRouter } from "vue-router";
 
 const store = useStore()
-
+const router= useRouter()
 const emailData = ref("");
 const password = ref("");
 
@@ -44,6 +45,15 @@ const getdata = async () => {
   if(validateData){
     console.log("email:",emailData.value,"password:",password.value)
     await store.dispatch('login', { email: emailData.value, password: password.value });
+    const role = computed(() => {
+  return store.state.userAuth.role;
+});
+if(role.value==0){
+  router.push({ name: "propertyDashboard" });
+}
+if(role.value==1){
+  router.push({ name: "propertyContList" });
+}
   }
 }
 </script>

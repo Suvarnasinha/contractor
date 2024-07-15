@@ -1,6 +1,10 @@
 <template>
   <div>
-    <h2>Submit Estimate</h2>
+    <v-row justify="center">
+      <v-col cols="12" sm="8" md="6">
+     
+          <v-card-title class="text-center">Submit Estimate</v-card-title>
+          </v-col></v-row>
     <v-form @submit.prevent="submitEstimate">
       <v-text-field v-model="estimate" label="Estimate" required></v-text-field>
       <v-text-field v-model="time" label="Time" required></v-text-field>

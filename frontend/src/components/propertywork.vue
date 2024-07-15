@@ -1,5 +1,9 @@
 <template>
-  <h2>Add Work</h2>
+  <v-row justify="center">
+    <v-col cols="12" sm="8" md="6">
+   
+        <v-card-title class="text-center">Add Work</v-card-title>
+        </v-col></v-row>
   <v-btn @click="addWork">Add work</v-btn>
   <v-form>
     <v-row v-for="(work, index) in workData" :key="index">

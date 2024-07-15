@@ -9,8 +9,9 @@
               <v-text-field label="Name" name="name" v-model="name" outlined></v-text-field>
               <v-text-field label="Address" name="address" v-model="address" outlined></v-text-field>
               <v-text-field label="Description" name="description" v-model="description" outlined></v-text-field>
-              
+              <v-card-actions>
               <v-btn color="primary" @click="addProperty">Add Property</v-btn>
+            </v-card-actions>
             </v-form>
           </v-card-text>
         </v-card>

@@ -4,7 +4,7 @@ const { registration, login, forgetpassword } = require('../controller/userAuth'
 const { addProperty, showAllProperty, addWork,updateEstimateStatus,getEstimate,fetchPropertyEstimate,showAllPropertyContEstimation,getProofDataForOwner,addComment
   ,getcommentdescription,showProperties,showStatus,showWork,seechatperson,archivedProperty } = require('../controller/property');
 const { authenticate } = require('../middleware/authentication');
-const { showAllPropertyCont, submitEstimate,proofData,addProof,getCommentProperties,getComments,contractChat,sendChat,seeMessage,getArchivedPropertiesContractor } = require('../controller/contractor');
+const { showAllPropertyCont, submitEstimate,proofData,addProof,getCommentProperties,getComments,contractChat,sendChat,seeMessage,getArchivedPropertiesContractor,showConStatus } = require('../controller/contractor');
 const upload = require('../middleware/multer');
 const{payment,getPaymentDetails}=require('../controller/payment');
 
@@ -29,12 +29,13 @@ router.get('/comments/:propertyId',getComments);
 router.get('/commentdescription/:propertyId',authenticate,getcommentdescription);
 router.get('/showProperties',authenticate,showProperties);
 router.get('/showStatus/:propertyid',showStatus);
+router.get('/showConStatus/:propertyid',showConStatus);
 router.get('/showWork/:propertyid',showWork);
-router.post('/contractChat/:propertyid',authenticate,contractChat)
+router.post('/contractChat/:propertyid',contractChat)
 router.post('/chat/message',authenticate,sendChat)
-router.get('/chat/show/:propertyid',authenticate,seeMessage)
+router.post('/chat/show/:propertyid',authenticate,seeMessage)
 router.post('/addcomment',addComment)
-router.get('/chat/property/:propertyid',seechatperson)
+router.get('/chat/property/:propertyid',authenticate,seechatperson)
 router.post('/checkout',payment)
 router.get('/getPayment',authenticate,getPaymentDetails)
 router.get('/getArchivedProperties',authenticate,archivedProperty)

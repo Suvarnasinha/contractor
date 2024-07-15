@@ -12,7 +12,7 @@ import estimateShow from './components/estimateShow.vue'
 import registration from './components/registration.vue'
 import proofWork from './components/proofWork.vue'
 import addProof from './components/addProof.vue'
-import viewProof from './components/viewProof.vue'
+import viewProof from './components/viewProof.vue' 
 import viewComment from './components/viewComment.vue'
 import addComment from './components/addComment.vue'
 import propertiesShowComment from './components/propertiesShowComment.vue'
@@ -27,6 +27,8 @@ import payment from './components/payment.vue'
 import paymentDetails from './components/paymentDetails.vue'
 import archiveProperty from './components/archiveProperty.vue'
 import archivedContractor from './components/archivedContractor.vue'
+import archivedComments from './components/archivedComments.vue'
+import showConStatus from './components/showConStatus.vue'
 
 import {store} from './store'
 
@@ -143,6 +145,12 @@ const routes = [
     meta: { requiredAuth: true },
   },
   {
+    name:'showConStatus',
+    path:'/showConStatus',
+    component:showConStatus,
+    meta: { requiredAuth: true },
+  },
+  {
     name:'showWork',
     path:'/showWork',
     component:showWork,
@@ -187,6 +195,11 @@ const routes = [
     name:'archivedContractor',
     path:'/archivedContractor',
     component:archivedContractor
+  },
+  {
+    name:'archivedComments',
+    path:'/proof/comment/:propertyId',
+    component:archivedComments
   }
 
 ];

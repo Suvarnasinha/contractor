@@ -1,15 +1,28 @@
 <template>
   <div class="archive-container">
-    <h2>Archived Properties hello</h2>
+  
+    <v-row justify="center">
+      <v-col cols="12" sm="8" md="6">
+     
+          <v-card-title class="text-center">Archived Properties</v-card-title>
+          </v-col></v-row>
+    
+
+
     <v-list>
       <v-list-item v-for="property in archivedProperties" :key="property.propertyid" class="archive-list-item">
         <v-list-item-content>
-          <v-list-item-title>{{ property.property_name }}</v-list-item-title>
+          <v-list-item-title>Property Name:  {{ property.property_name }}</v-list-item-title>
+          <v-list-item-title>Property Name:  {{ property.propertyid }}</v-list-item-title>
+          <v-list-item-title>Contractor Name:  {{ property.contractor_name }}</v-list-item-title>
+          <v-list-item-title>Contractor-Email:  {{ property.contractor_email }}</v-list-item-title>
+          <v-list-item-title>Estimate:{{ property.estimate }}</v-list-item-title>
         </v-list-item-content>
-        <v-list-item-action>
+      <v-card-actions>
           <v-btn @click="viewProof(property.propertyid)" color="primary">View Proof</v-btn>
-          <v-btn color="primary" @click="showWork(property.propertyid)">Show All Work</v-btn>
-        </v-list-item-action>
+          <v-btn color="secondary" @click="status(property.propertyid)">Show Status</v-btn>
+          <v-btn color="info" @click="showWork(property.propertyid)">Show All Work</v-btn>
+        </v-card-actions>
       </v-list-item>
     </v-list>
   </div>
@@ -18,9 +31,6 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-// import { useStore } from 'vuex';
-
-// const store = useStore();
 const router = useRouter();
 const archivedProperties = ref([]);
 
@@ -37,12 +47,19 @@ const fetchArchivedProperties = async () => {
 };
 
 const viewProof = (propertyId) => {
-  router.push(`/proof/details/${propertyId}`);
+  router.push(`/proof/comment/${propertyId}`);
 };
 
 const showWork = (propertyid) => {
   router.push({
     name: 'showWork',
+    params: { propertyid }
+  });
+};
+
+const status = (propertyid) => {
+  router.push({
+    name: 'showStatus',
     params: { propertyid }
   });
 };

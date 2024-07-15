@@ -1,12 +1,18 @@
 <template>
   <div class="property-container">
-    <h2>Properties with Accepted Estimates</h2>
-    <ul>
+    <v-row justify="center">
+      <v-col cols="12" sm="10" md="6">
+     
+          <v-card-title class="text-center">Properties with Accepted Estimates</v-card-title>
+          </v-col></v-row>
+    <ul class="proofwork-card">
       <li v-for="property in properties" :key="property.propertyid">
         <h3>{{ property.property_name }}</h3>
         <p><strong>Address:</strong> {{ property.property_address }}</p>
         <p><strong>Description:</strong> {{ property.property_description }}</p>
-        <v-btn @click="navigateToAddProof(property.propertyid)">Add Proof</v-btn>
+      <v-card-actions>
+        <v-btn color=primary @click="navigateToAddProof(property.propertyid)">Add Proof</v-btn>
+     </v-card-actions>
       </li>
     </ul>
   </div>
@@ -35,6 +41,7 @@ onMounted(async () => {
 
     const data = await response.json();
     properties.value = data;
+    console.log("properties value for the roof dara",properties.value);
   } catch (error) {
     console.error('Error fetching proof data:', error);
   }
@@ -80,5 +87,10 @@ const navigateToAddProof = (propertyId) => {
 
 .property-container v-btn {
   margin-top: 10px;
+}
+
+.proofwork-card:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+
 }
 </style>

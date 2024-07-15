@@ -1,6 +1,10 @@
 <template>
   <div class="property-container">
-    <h1>Properties</h1>
+    <v-row justify="center">
+      <v-col cols="12" sm="8" md="6">
+     
+          <v-card-title class="text-center">Properties</v-card-title>
+          </v-col></v-row>
     <div v-if="properties.length === 0" class="no-properties">No properties available</div>
     <div v-else>
       <v-row>
@@ -9,7 +13,9 @@
             <v-card-title>{{ property.name }}</v-card-title>
             <v-card-subtitle>{{ property.address }}</v-card-subtitle>
             <v-card-text>{{ property.description }}</v-card-text>
-            <!-- <v-card-text>{{ property.propertyid }}</v-card-text> -->
+            <v-card-text>{{ property.propertyid }}</v-card-text>
+            <v-card-text v-if="property.lastStatus">property{{ property.lastStatus.state }}</v-card-text>
+
             <v-card-actions>
               <v-btn color="primary" @click="showWork(property.propertyid)">Show All Work</v-btn>
               <v-btn color="secondary" @click="status(property.propertyid)">Show Status</v-btn>
@@ -33,7 +39,7 @@ const router = useRouter();
 const fetchContProperties = async () => {
   await store.dispatch('showProperty');
 };
-
+ 
 onMounted(fetchContProperties);
 
 const properties = computed(() => store.state.property.showprop);

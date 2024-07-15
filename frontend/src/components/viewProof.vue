@@ -1,14 +1,20 @@
 <template>
   <div class="proof-container">
-    <h2>Proof Data for Your Properties</h2>
+    <v-row justify="center">
+      <v-col cols="12" sm="8" md="6">
+     
+          <v-card-title class="text-center">Proof Data</v-card-title>
+          </v-col></v-row>
     <v-list>
       <v-list-item v-for="proof in proofs" :key="proof.proofworkid" class="proof-list-item">
         <v-list-item-content>
-          <v-list-item-title>{{ proof.property_name }}</v-list-item-title>
+          <v-list-item-title>Property-Name:  {{ proof.property_name }}</v-list-item-title>
+          <v-list-item-title>Contractor-Name:  {{ proof.contractor_name }}</v-list-item-title>
+          <v-list-item-title>Contractor-Email:  {{ proof.contractor_email }}</v-list-item-title>
         </v-list-item-content>
-        <v-list-item-action>
+        <v-card-actions>
           <v-btn @click="viewProofDetails(proof.propertyid)" color="primary">View Details</v-btn>
-        </v-list-item-action>
+        </v-card-actions>
       </v-list-item>
     </v-list>
   </div>

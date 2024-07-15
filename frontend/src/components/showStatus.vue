@@ -1,7 +1,6 @@
 <template>
   <div class="status-container">
     <h2>Property Status</h2>
-    <!-- <div v-if="propertyState" > -->
       <div v-for="state in propertyState" :key="state" class="status-box">
 
       <p><strong>Status:</strong> {{ state.state }}</p>

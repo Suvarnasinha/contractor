@@ -1,6 +1,10 @@
 <template>
   <div class="work-container">
-    <h1>Work Details for Property</h1>
+   <v-row justify="center">
+      <v-col cols="12" sm="8" md="6">
+     
+          <v-card-title class="text-center">Work Details for Property</v-card-title>
+          </v-col></v-row>
     <v-container v-if="groupedWorkDetails.length === 0" class="no-work-details">
       <div>No work details available</div>
     </v-container>

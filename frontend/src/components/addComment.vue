@@ -1,6 +1,11 @@
 <template>
   <div>
-    <h2>Proof Details here</h2>
+    <!-- <h2>Proof Details here</h2> -->
+    <v-row justify="center">
+      <v-col cols="12" sm="8" md="6">
+     
+          <v-card-title class="text-center">Proof Details</v-card-title>
+          </v-col></v-row>
    
     <div v-for="(images, description) in groupedProofs" :key="description" class="proof-group">
       <p>{{ description }}</p>
@@ -80,7 +85,7 @@ const Payment = async () => {
      try {
 const propertyId = route.params.propertyId;
 
-alert("hello")
+alert("Please wait a few seconds for the payment to begin.")
        const response = await fetch(`http://localhost:3000/checkout`, {
          method: 'POST',
          headers: {

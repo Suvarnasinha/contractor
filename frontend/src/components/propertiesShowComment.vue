@@ -9,9 +9,10 @@
           <v-card-text>
             <div>Description: {{ property.property_description }}</div>
             <div>Address: {{ property.property_address }}</div>
+            <div>Address: {{ property.propertyid }}</div>
           </v-card-text>
           <v-card-actions>
-            <v-btn color="primary" @click="showComments(property.propertiesid)">Show Comments</v-btn>
+            <v-btn color="primary" @click="showComments(property.propertyid)">Show Comments</v-btn>
           </v-card-actions>
         </v-card>
       </v-col>
@@ -34,10 +35,11 @@ const properties = computed(() => {
 const fetchProperties = async () => {
   await store.dispatch('fetchPropertiesComment');
 };
-
+console.log("detchproperties",properties.value)
 const router = useRouter();
 
 const showComments = (propertyId) => {
+  alert(propertyId)
   router.push(`/comments/${propertyId}`);
 };
 

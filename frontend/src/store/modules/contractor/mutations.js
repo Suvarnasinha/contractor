@@ -14,4 +14,8 @@ export const mutations={
   SET_PAYMENT_DETAIL(state, paymentDetails) {
     state.paymentDetails = paymentDetails;
   },
+  SET_STATUS_CON(state,status){
+    state.status=status;
+    console.log("the mutation data for status",state.status)
+  }
 }

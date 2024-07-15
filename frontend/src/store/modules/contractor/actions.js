@@ -66,5 +66,15 @@ export const actions={
     }
   },
 
-  
+  async contractorStatus({ commit }, propertyId){
+    try{
+      const response = await fetch(`http://localhost:3000/showConStatus/${propertyId}`);
+      const status=await response.json();
+      console.log("statestatusaction",status.state);
+      commit('SET_STATUS_CON',status);
+      return status;
+    }catch(error){
+      console.log(error);
+    }
+  }
 }

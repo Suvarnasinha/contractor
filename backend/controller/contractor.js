@@ -5,28 +5,29 @@ exports.showAllPropertyCont = async (req, res) => {
     const userid =req.userid;
     console.log(userid)
     const [rows] = await con.promise().query(`
-    SELECT 
-    p.propertyid,
-    p.name AS property_name,
-    p.address AS property_address,
-    p.description AS property_description,
-    u.userid AS userid
-FROM 
-    property p
-JOIN 
-    work w ON p.propertyid = w.propertyid
-JOIN 
-    workdeatil pd ON w.workid = pd.workid
-JOIN 
-    workimage pri ON pd.workdetailid = pri.workdetailid
-JOIN 
-    users u ON p.userid = u.userid
-WHERE 
-    w.accept = 0
-GROUP BY 
-    p.propertyid, p.name, p.address, p.description, u.userid
-
-
+   SELECT 
+        p.propertyid,
+        p.name AS property_name,
+        p.address AS property_address,
+        p.description AS property_description,
+        u.userid AS userid,
+        cs.state AS contractor_status
+      FROM 
+        property p
+      JOIN 
+        work w ON p.propertyid = w.propertyid
+      JOIN 
+        workdeatil pd ON w.workid = pd.workid
+      JOIN 
+        workimage pri ON pd.workdetailid = pri.workdetailid
+      JOIN 
+        users u ON p.userid = u.userid
+      LEFT JOIN 
+        contractorstate cs ON p.propertyid = cs.propertyid
+      WHERE 
+        w.accept = 0
+      GROUP BY 
+        p.propertyid, p.name, p.address, p.description, u.userid, cs.state
     `,);
     res.json(rows);
   } catch (error) {
@@ -44,6 +45,8 @@ exports.submitEstimate = async (req, res) => {
       VALUES (?, ?, ?, ?);
     `;
     await con.execute(submitEstimateQuery, [propertyid, estimate, time, contractorid]);
+    const addWorkState = `INSERT INTO property_contractor.contractorstate (propertyId, state) VALUES (?, ?); `;
+    const [addWorkStateData] = await con.promise().query(addWorkState, [propertyid, 'Estimate Added']);
     res.json({ propertyid, estimate, time,contractorid});
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -60,7 +63,7 @@ exports.proofData=async (req,res)=>{
       INNER JOIN work w ON p.propertyid = w.propertyid
       INNER JOIN workcontractor wc ON p.propertyid = wc.propertyid
       LEFT JOIN payment pay ON p.propertyid = pay.propertyid AND pay.status = 1
-      WHERE wc.contactorid = 2 AND w.accept = 1 AND pay.paymentid IS NULL`,
+      WHERE wc.contactorid = ? AND w.accept = 1 AND pay.paymentid IS NULL`,
       [userid]);
       res.json(proofData);
   } catch (error) {
@@ -107,7 +110,8 @@ exports.addProof = async (req, res) => {
         }
 
     }
-
+    const addWorkState = `INSERT INTO property_contractor.contractorstate (propertyId, state) VALUES (?, ?); `;
+    const [addWorkStateData] = await con.promise().query(addWorkState, [propertyid, 'Added Proof']);
     res.status(200).json({ message: 'Proof data and images added successfully', proofDetails });
   } catch (error) {
     console.error('Error adding proof data:', error);
@@ -138,6 +142,7 @@ console.log(propertyId);
 
 exports.getCommentProperties=async(req,res)=>{
   const userid = req.userid;
+  console.log("userid in the comment contractor",userid)
   try {
     const [properties] = await con.promise().query(`
   SELECT DISTINCT p.propertyid, p.name AS property_name, p.address AS property_address, p.description AS property_description
@@ -170,7 +175,8 @@ exports.submitEstimate = async (req, res) => {
             VALUES (?, ?, ?, ?);
         `;
         await con.execute(submitEstimateQuery, [propertyid, estimate, time, contractorid]);
-
+        const addWorkState = `INSERT INTO property_contractor.contractorstate (propertyId, state) VALUES (?, ?); `;
+        const [addWorkStateData] = await con.promise().query(addWorkState, [propertyid, 'Estimate Added']);
         // Fetch property owner's user ID
         const [rows] = await con.execute(`
             SELECT userid FROM property WHERE propertyid = ?
@@ -217,6 +223,7 @@ exports.submitEstimate = async (req, res) => {
 // router.post('/contractChat/:propertyid',contractChat)
 exports.contractChat = async (req, res) => {
   const propertyId  = req.params.propertyid;
+  console.log("hello world")
   try {
          const [owner] = await con.promise().query(
              'SELECT u.userid, u.name FROM users u JOIN property p ON u.userid = p.userid WHERE p.propertyid = ?',
@@ -231,6 +238,7 @@ exports.contractChat = async (req, res) => {
 // router.post('/chat/message',authenticate,sendChat)
 exports.sendChat = async (req, res) => {
     const sender_id=req.userid
+    console.log("reeererreeeer",req.body);
     const { receiver_id, message,propertyid} = req.body;
    console.log("message for user=========",message)
    console.log("message for receibver=========",receiver_id)
@@ -247,17 +255,19 @@ exports.sendChat = async (req, res) => {
 };
 
 // router.get('/chat/show/:propertyid',seeMessage)
-
-
 exports.seeMessage=async(req,res)=>{
   const propertyId  = req.params.propertyid;
-  console.log("object",propertyId);
+  const userId=req.userid;
+  console.log("seeMessageHERE",propertyId);
+  const { receiver_id} = req.body;
+  console.log("message for receibver=========",receiver_id)
+  console.log("message for senser=========",req.userid)
   try{
     const [messages] = await con.promise().query(
-      `SELECT * FROM chat_message 
-       WHERE propertyid = ? AND 
-       (senderid = ? OR receiverid = ?)`,
-      [propertyId, userId, userId]
+      `	SELECT * FROM chat_message 
+      WHERE propertyid = ? AND 
+      (senderid = ? AND receiverid = ?)OR(senderid = ? AND receiverid = ?) and propertyid = ?`,
+      [propertyId, userId, receiver_id,receiver_id,userId,propertyId]
     );
     res.json(messages);
   }catch(error){
@@ -290,3 +300,21 @@ exports.getArchivedPropertiesContractor = async (req, res) => {
     res.status(500).json({ error: 'Error fetching archived properties' });
   }
 };
+
+
+
+
+
+exports.showConStatus = async (req, res) => {
+  const propertyId = req.params.propertyid;
+  console.log(propertyId)
+  try {
+    const [showConStatus] = await con.promise().query(
+      `select state from contractorstate where propertyId=?`,
+      [propertyId]
+    );
+    res.json(showConStatus);
+  } catch (error) {
+    console.log("error", error);
+  }
+}

@@ -25,15 +25,15 @@ import { useStore } from 'vuex';
 
 const store=useStore();
 const route = useRoute();
-const propertyId = ref(route.params.propertyId);
+const propertyId = route.params.propertyId;
 const comments = ref([]);
 const proofs = computed(() =>{ 
   return store.state.property.description});
 console.log("object",proofs.value);
 const fetchComments = async () => {
   try {
-   console.log(propertyId.value,"qwertyuiop")
-    const response = await fetch(`http://localhost:3000/comments/${propertyId.value}`);
+   console.log(propertyId,"qwertyuiop")
+    const response = await fetch(`http://localhost:3000/comments/${propertyId}`);
     if (!response.ok) {
       throw new Error('Failed to fetch comments');
     }
@@ -58,7 +58,7 @@ const groupedProofs = computed(() => {
 // console.log("group",groupedProofs);
 const getPropertyData =()=>{
   // alert(propertyId.value)
-  const propertyid=propertyId.value;
+  const propertyid=propertyId;
   // alert(propertyid)
    store.dispatch('getCommentDescription', { propertyId:propertyid });
 }

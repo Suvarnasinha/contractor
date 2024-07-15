@@ -87,7 +87,7 @@ export const actions={
 
 ///////to show to property all the estimated property
     async fetchProEstimate({ commit }) {
-      try {
+      try { 
         const response = await fetch('http://localhost:3000/fetchPropertyEstimate',{
           method:'GET',
           credentials:"include",

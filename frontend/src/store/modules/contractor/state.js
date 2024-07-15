@@ -3,4 +3,5 @@ export const state={
   estimate:"",
   propertyData:"",
   paymentDetails: [],
+  status:[]
 }

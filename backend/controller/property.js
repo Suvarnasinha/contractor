@@ -206,7 +206,7 @@ exports.updateEstimateStatus = async (req, res) => {
   try {
     if (status === 'accepted') {
       console.log(`Received request to accept estimate with contractorworkid: ${contractorworkid} and status: ${status}`);
-
+      
       // Select the propertyid from the contractorwork table
       const selectPropertyIdQuery = `SELECT propertyid FROM contractorwork WHERE contractorworkid = ?`;
       const [rows] = await con.promise().query(selectPropertyIdQuery, [contractorworkid]);
@@ -222,6 +222,8 @@ exports.updateEstimateStatus = async (req, res) => {
       const addEstimateState = `INSERT INTO propertystate (propertyId, state) VALUES (?, ?);`;
       const [addEstimateStateData] = await con.promise().query(addEstimateState, [propertyId, 'Estimation Approved(In progress)']);
 
+      const addWorkState = `INSERT INTO property_contractor.contractorstate (propertyId, state) VALUES (?, ?); `;
+      const [addWorkStateData] = await con.promise().query(addWorkState, [propertyId, 'Estimate Accepted']);
 
       const deleteOtherContractorWorksQuery = `DELETE FROM contractorwork WHERE propertyid = ? AND contractorworkid != ?`;
       const deleteResult = await con.promise().query(deleteOtherContractorWorksQuery, [propertyId, contractorworkid]);
@@ -277,14 +279,11 @@ exports.getcommentdescription = async (req, res) => {
   console.log("property:getcommentdescription", propertyId)
   try {
     const [getcommentdescription] = await con.promise().query(
-      `SELECT distinct p.propertyid,pw.description, pwi.image AS image, u.name AS contractor_name, u.email AS contractor_email
+      `SELECT distinct p.propertyid,pw.description, pwi.image AS image
       FROM proofwork pw
       JOIN proofworkimage pwi ON pw.proofworkid = pwi.proofdataid
       JOIN property p ON pw.propertyid = p.propertyid
-      JOIN work w ON p.propertyid = w.propertyid
-      JOIN workcontractor wc ON w.propertyid = wc.propertyid
-      JOIN users u ON wc.contactorid = u.userid
-      WHERE pw.propertyid = ?;`,
+	    WHERE pw.propertyid = ?;`,
       [propertyId]
     );
     res.json(getcommentdescription);
@@ -305,6 +304,8 @@ exports.addComment = async (req, res) => {
     const addCommentState = `INSERT INTO propertystate (propertyId, state) VALUES (?, ?);`;
     const [addCommentStateData] = await con.promise().query(addCommentState, [propertyId, 'Reviewed and have Mistake']);
     res.json({ message: 'Comment added successfully' });
+    const addWorkState = `INSERT INTO property_contractor.contractorstate (propertyId, state) VALUES (?, ?); `;
+    const [addWorkStateData] = await con.promise().query(addWorkState, [propertyId, 'Redoing the Work']);
   } catch (error) {
     console.log('Error adding comment:', error);
     res.status(500).json({ error: 'Failed to add comment' });
@@ -312,35 +313,35 @@ exports.addComment = async (req, res) => {
 };
 
 
-exports.showProperties = async (req, res) => {
-  const userid = req.userid;
-  console.log("userid:", userid)
-  try {
-    const [showproperties] = await con.promise().query(
-      `SELECT distinct p.*
-FROM property p
-LEFT JOIN work w ON p.propertyid = w.propertyid
-WHERE p.userid = ?
-  AND (
-    NOT EXISTS (
-      SELECT 1
-      FROM payment pay
-      WHERE pay.propertyid = p.propertyid
-    )
-    OR EXISTS (
-      SELECT 1
-      FROM payment pay
-      WHERE pay.propertyid = p.propertyid
-        AND pay.status = 0
-    )
-  );`,
-      [userid]
-    );
-    res.json(showproperties);
-  } catch (error) {
-    console.log("error", error);
-  }
-}
+  // exports.showProperties = async (req, res) => {
+  //   const userid = req.userid;
+  //   console.log("userid:", userid)
+  //   try {
+  //     const [showproperties] = await con.promise().query(
+  //       `SELECT distinct p.*
+  // FROM property p
+  // LEFT JOIN work w ON p.propertyid = w.propertyid
+  // WHERE p.userid = ?
+  //   AND (
+  //     NOT EXISTS (
+  //       SELECT 1
+  //       FROM payment pay
+  //       WHERE pay.propertyid = p.propertyid
+  //     )
+  //     OR EXISTS (
+  //       SELECT 1
+  //       FROM payment pay
+  //       WHERE pay.propertyid = p.propertyid
+  //         AND pay.status = 0
+  //     )
+  //   );`,
+  //       [userid]
+  //     );
+  //     res.json(showproperties);
+  //   } catch (error) {
+  //     console.log("error", error);
+  //   }
+  // }
 
 
 exports.showStatus = async (req, res) => {
@@ -373,32 +374,17 @@ exports.showWork = async (req, res) => {
     console.log("error", error);
   }
 }
-
-
-exports.seechatperson = async (req, res) => {
-  const propertyid = req.params.propertyid;
-  try {
-    const query =  `SELECT DISTINCT u.userid AS contractorid, u.name
-    FROM users u
-    LEFT JOIN chat_message cm ON u.userid = cm.senderid AND cm.propertyid = 2
-    WHERE u.usertype = 1`;
-    const [contractors] = await con.promise().query(query, [propertyid]);
-    res.json(contractors);
-  } catch (error) {
-    console.error('Error fetching contractors:', error);
-    res.status(500).json({ error: error.message });
-  }
-}
-
+ 
   exports.archivedProperty = async (req, res) => {
     const userid = req.userid;
     console.log("userid",userid);
     try {
-      const query =`SELECT DISTINCT p.propertyid, p.name AS property_name, u.name AS contractor_name, u.email AS contractor_email
+      const query =`SELECT DISTINCT p.propertyid, p.name AS property_name, u.name AS contractor_name, u.email AS contractor_email, cw.estimate
       FROM property p
       INNER JOIN proofwork pw ON p.propertyid = pw.propertyid
       INNER JOIN workcontractor wc ON pw.propertyid = wc.propertyid
       INNER JOIN users u ON wc.contactorid = u.userid
+      LEFT JOIN contractorwork cw ON p.propertyid = cw.propertyid AND wc.contactorid = cw.contactorid
       INNER JOIN payment pay ON p.propertyid = pay.propertyid AND pay.status = 1
       WHERE p.userid = ?`;
       const [contractors] = await con.promise().query(query, [userid]);
@@ -408,3 +394,79 @@ exports.seechatperson = async (req, res) => {
       res.status(500).json({ error: error.message });
     }
   }
+
+
+  exports.seechatperson = async (req, res) => {
+    const propertyid = req.params.propertyid;
+  console.log("propertuid",propertyid);
+    try {
+      const [acceptedContractor] = await con.promise().query(`
+      SELECT distinct u.userid AS contractorid, u.name
+      FROM users u
+      JOIN contractorwork cw ON u.userid = cw.contactorid
+      JOIN work w ON cw.propertyid = w.propertyid
+      WHERE w.propertyid = ? AND w.accept = 1
+      `, [propertyid]);
+  
+      if (acceptedContractor.length > 0) {
+        console.log("lokijuhy");
+        return res.json(acceptedContractor);
+      }
+  
+      const [contractors] = await con.promise().query(`
+        SELECT DISTINCT u.userid AS contractorid, u.name
+        FROM users u
+        LEFT JOIN chat_message cm ON u.userid = cm.senderid AND cm.propertyid = ?
+        WHERE u.usertype = 1
+      `, [propertyid]);
+  
+      res.json(contractors);
+    } catch (error) {
+      console.error('Error fetching contractors:', error);
+      res.status(500).json({ error: error.message });
+    }
+  };
+
+
+exports.showProperties = async (req, res) => {
+  const userid = req.userid;
+  console.log(userid,"df");
+  try {
+    const [properties] = await con.promise().query(`
+      SELECT DISTINCT p.*
+      FROM property p
+      LEFT JOIN work w ON p.propertyid = w.propertyid
+      WHERE p.userid = ?
+        AND (
+          NOT EXISTS (
+            SELECT 1
+            FROM payment pay
+            WHERE pay.propertyid = p.propertyid
+          )
+          OR EXISTS (
+            SELECT 1
+            FROM payment pay
+            WHERE pay.propertyid = p.propertyid
+              AND pay.status = 0
+          )
+        );
+    `, [userid]);
+
+    for (let property of properties) {
+      const [status] = await con.promise().query(`
+        SELECT state
+        FROM propertystate
+        WHERE propertyId = ?
+        ORDER BY propertystate DESC
+        LIMIT 1;
+      `, [property.propertyid]);
+      property.lastStatus = status[0];
+      
+    }
+
+    res.json(properties);
+  } catch (error) {
+    console.error('Error fetching properties:', error);
+    res.status(500).json({ error: error.message });
+  }
+};

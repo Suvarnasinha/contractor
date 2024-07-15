@@ -1,61 +1,93 @@
 <template>
   <div class="chat-container">
     <button @click="back" class="back-button">Back</button>
-    <h1 class="chat-header">Chat with {{ name }}</h1>
+    <div v-if="messages.length === 0">
+      Has not send any mesaage from any side yet
+    </div>
+    <h1 v-else class="chat-header">Chat with {{ name }}</h1>
     <div class="chat-messages">
-      <div v-for="message in messages" :key="message.message_id" :class="messageClass(message)">
+      <div
+        v-for="message in messages"
+        :key="message.message_id"
+        :class="messageClass(message)"
+      >
         <div class="message-text">{{ message.message }}</div>
       </div>
     </div>
     <div class="chat-input">
-      <textarea v-model="newMessage" placeholder="Type your message..." class="input-textarea"></textarea>
+      <textarea
+        v-model="newMessage"
+        placeholder="Type your message..."
+        class="input-textarea"
+      ></textarea>
       <button @click="sendMessage" class="send-button">Send</button>
     </div>
   </div>
 </template>
       
 <script setup>
-import { onMounted, ref } from 'vue';
-import { useRoute } from 'vue-router';
-import { io } from 'socket.io-client';
-import { router } from '@/router';
+import { onMounted, ref } from "vue";
+import { useRoute } from "vue-router";
+import { io } from "socket.io-client";
+import { router } from "@/router";
 
 const route = useRoute();
 const propertyid = route.params.propertyid;
-const ownerid = route.params.contractorid; 
-const name = route.params.name; 
-const owneridData = route.params.owneridData; 
+const ownerid = route.params.contractorid;
+const name = route.params.name;
+const owneridData = route.params.owneridData;
 
 const owner = ref({});
 const messages = ref([]);
-const newMessage = ref('');
-const socket = io('http://localhost:3000');
+const newMessage = ref("");
+const socket = io("http://localhost:3000");
 
 onMounted(() => {
   fetchOwnerData();
   fetchMessages();
-  socket.on('receiveMessage', (message) => {
+  socket.on("receiveMessage", (message) => {
     messages.value.push(message);
   });
-}); 
+});
 
 const fetchOwnerData = async () => {
   try {
-    const response = await fetch(`http://localhost:3000/contractChat/${propertyid}`, {
-      method: 'POST',
-    });
+    const response = await fetch(
+      `http://localhost:3000/contractChat/${propertyid}`,
+      {
+        credentials: "include",
+        method: "POST",
+      }
+    );
     owner.value = await response.json();
   } catch (error) {
-    console.error('Error fetching property owner:', error);
+    console.error("Error fetching property owner:", error);
   }
 };
 
 const fetchMessages = async () => {
   try {
-    const response = await fetch(`http://localhost:3000/chat/show/${propertyid}`);
+    const messageData = {
+      receiver_id: ownerid,
+      senderid: owneridData,
+    };
+
+    console.log("see meassage SENDERIffdfsD", messageData);
+    const response = await fetch(
+      `http://localhost:3000/chat/show/${propertyid}`,
+      {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ receiver_id: ownerid }),
+      }
+    );
+    console.log("see meassage RECEIVERID", ownerid);
     messages.value = await response.json();
   } catch (error) {
-    console.error('Error fetching messages:', error);
+    console.error("Error fetching messages:", error);
   }
 };
 
@@ -64,33 +96,33 @@ const sendMessage = async () => {
     receiver_id: ownerid,
     senderid: owneridData,
     message: newMessage.value,
-    propertyid: propertyid
+    propertyid: propertyid,
   };
-  socket.emit('sendMessage', message);
+  socket.emit("sendMessage", message);
   try {
-    await fetch('http://localhost:3000/chat/message', {
-      method: 'POST',
-      credentials: 'include',
+    await fetch("http://localhost:3000/chat/message", {
+      method: "POST",
+      credentials: "include",
       headers: {
-        'Content-Type': 'application/json'
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify(message)
+      body: JSON.stringify(message),
     });
-    newMessage.value = '';
+    newMessage.value = "";
   } catch (error) {
-    console.error('Error sending message:', error);
+    console.error("Error sending message:", error);
   }
 };
 
 const messageClass = (message) => {
-  return message.senderid == owneridData ? 'message-sender' : 'message-receiver';
+  return message.senderid == owneridData
+    ? "message-sender"
+    : "message-receiver";
 };
 
-
-const back=()=>{
-  router.push({name:'PropertyChatPeople'})
-}
-
+const back = () => {
+  router.push({ name: "PropertyChatPeople" });
+};
 </script>
 
 <style scoped>
@@ -168,13 +200,12 @@ const back=()=>{
   cursor: pointer;
 }
 
-.back-button{
+.back-button {
   background-color: #3b81fb;
   color: white;
   padding-top: 8px;
   padding-bottom: 8px;
   margin-right: 1450px;
-
 }
 .send-button:hover {
   background-color: #3f6ea1;

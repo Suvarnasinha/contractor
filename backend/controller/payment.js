@@ -1,6 +1,6 @@
 
 const con = require("../config/config");
- const stripe = require('stripe')('sk_test_51Pbbz2Rudpshb9kygJ4vSHwjY7M6i6g1lfDZ2CkP6iCnn9ZCaipKVg8wiFeU2MUBxCJc6RUAWHilgoAihj1zhEOs00SglTIduK');
+ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 
     exports.payment=async (req,res)=>{
@@ -35,12 +35,16 @@ const con = require("../config/config");
         quantity: 1,
       }],
       mode: 'payment',
-      success_url: 'http://localhost:8080/payment',
+      success_url: 'http://localhost:8081/payment',
       // cancel_url: 'http://localhost:3000/cancel',
     });
 if(session){
+  console.log("session id is here")
   const [pay] = await con.promise().query('UPDATE property_contractor.payment SET status = 1 WHERE paymentid = ?', [paymentdata]);
- 
+  const addWorkState = `INSERT INTO propertystate (propertyId, state) VALUES (?, ?);`;
+  const [addWorkStateData] = await con.promise().query(addWorkState, [propertyId, 'Payment Successful']);
+  const addWorkStateCon = `INSERT INTO property_contractor.contractorstate (propertyId, state) VALUES (?, ?); `;
+  const [addWorkStateDataCon] = await con.promise().query(addWorkStateCon, [propertyid, 'Payment Successful']);
 }
     res.json({ id: session.id });
 
@@ -54,16 +58,15 @@ if(session){
 
 exports.getPaymentDetails = async (req, res) => {
   const contractorId = req.userid;
-
+  console.log("contractorid",contractorId);
   try {
     const query = `
-      SELECT 
+      SELECT distinct
         p.propertyid, 
         p.name as propertyName, 
         u.name as ownerName, 
         pm.amount, 
-        pm.status, 
-        pm.payment_date 
+        pm.status
       FROM payment pm
       JOIN property p ON pm.propertyid = p.propertyid
       JOIN users u ON p.userid = u.userid

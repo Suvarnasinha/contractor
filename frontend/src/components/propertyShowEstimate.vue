@@ -1,6 +1,10 @@
 <template>
   <div>
-    <h1>Properties</h1>
+    <v-row justify="center">
+      <v-col cols="12" sm="8" md="6">
+     
+          <v-card-title class="text-center">Properties</v-card-title>
+          </v-col></v-row>
     <div v-if="properties.length === 0">No properties available</div>
     <div v-else>
       <v-row>
@@ -10,8 +14,9 @@
             <v-card-subtitle>{{ property.property_address }}</v-card-subtitle>
             <v-card-text>{{ property.property_description }}</v-card-text>
             <v-card-text>{{ property.propertyid }}</v-card-text>
-
-            <v-btn @click="showEstimate(property.propertyid)">Show Estimates</v-btn>
+            <v-card-actions>
+            <v-btn color="primary" @click="showEstimate(property.propertyid)">Show Estimates</v-btn>
+            </v-card-actions>
           </v-card>
         </v-col>
       </v-row>
