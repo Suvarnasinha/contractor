@@ -2,7 +2,7 @@
   <div class="chat-container">
     <button @click="back" class="back-button">Back</button>
     <div v-if="messages.length === 0">
-      Has not send any mesaage from any side yet
+      No messages sent yet.
     </div>
     <h1 v-else class="chat-header">Chat with {{ name }}</h1>
     <div class="chat-messages">
@@ -24,7 +24,7 @@
     </div>
   </div>
 </template>
-      
+
 <script setup>
 import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
@@ -43,8 +43,11 @@ const newMessage = ref("");
 const socket = io("http://localhost:3000");
 
 onMounted(() => {
+  // Fetch initial data when component is mounted
   fetchOwnerData();
   fetchMessages();
+
+  // Socket.io listener for receiving messages
   socket.on("receiveMessage", (message) => {
     messages.value.push(message);
   });
@@ -67,12 +70,6 @@ const fetchOwnerData = async () => {
 
 const fetchMessages = async () => {
   try {
-    const messageData = {
-      receiver_id: ownerid,
-      senderid: owneridData,
-    };
-
-    console.log("see meassage SENDERIffdfsD", messageData);
     const response = await fetch(
       `http://localhost:3000/chat/show/${propertyid}`,
       {
@@ -84,7 +81,6 @@ const fetchMessages = async () => {
         body: JSON.stringify({ receiver_id: ownerid }),
       }
     );
-    console.log("see meassage RECEIVERID", ownerid);
     messages.value = await response.json();
   } catch (error) {
     console.error("Error fetching messages:", error);
@@ -99,6 +95,7 @@ const sendMessage = async () => {
     propertyid: propertyid,
   };
   socket.emit("sendMessage", message);
+
   try {
     await fetch("http://localhost:3000/chat/message", {
       method: "POST",
@@ -108,7 +105,7 @@ const sendMessage = async () => {
       },
       body: JSON.stringify(message),
     });
-    newMessage.value = "";
+    newMessage.value = ""; // Clear the input field after sending message
   } catch (error) {
     console.error("Error sending message:", error);
   }
@@ -207,6 +204,7 @@ const back = () => {
   padding-bottom: 8px;
   margin-right: 1450px;
 }
+
 .send-button:hover {
   background-color: #3f6ea1;
 }

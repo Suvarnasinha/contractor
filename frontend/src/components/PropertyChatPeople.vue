@@ -10,11 +10,8 @@
         :key="contractor.contractorid"
         class="contractor-item"
       >
-        <span>{{ contractor.name }}(contractor)</span>
-        <!-- <span>{{contractor.contractorid}}</span> -->
-        <v-btn @click="initiateChat(contractor.contractorid, contractor.name)"
-          >Chat</v-btn
-        >
+        <span>{{ contractor.name }} (contractor)</span>
+        <v-btn @click="initiateChat(contractor.contractorid, contractor.name)">Chat</v-btn>
       </div>
     </div>
   </div>
@@ -27,48 +24,45 @@ import { useRoute, useRouter } from "vue-router";
 const route = useRoute();
 const router = useRouter();
 const propertyid = route.params.propertyid;
-console.log("propertytytytytytytytyty", propertyid);
+console.log("propertyid:", propertyid);
 const contractors = ref([]);
 
 onMounted(() => {
-  fetchContractors();
+  if (propertyid) {
+    fetchContractors();
+  } else {
+    console.error("Property ID is undefined");
+  }
 });
 
 const fetchContractors = async () => {
   try {
-    const response = await fetch(
-      `http://localhost:3000/chat/property/${propertyid}`,
-      {
-        credentials: "include",
-      }
-    );
+    const response = await fetch(`http://localhost:3000/chat/property/${propertyid}`, {
+      credentials: "include",
+    });
     contractors.value = await response.json();
-    console.log("object", contractors.value);
+    console.log("Contractors fetched:", contractors.value);
   } catch (error) {
     console.error("Error fetching contractors:", error);
   }
 };
 
 const initiateChat = async (contractorid, name) => {
-  console.log("qwaszx");
   try {
-    const response = await fetch(
-      `http://localhost:3000/contractChat/${propertyid}`,
-      {
-        // credentials: "inlcude",
-        method: "POST",
-      }
-    );
+    const response = await fetch(`http://localhost:3000/contractChat/${propertyid}`, {
+      method: "POST",
+      credentials: "include",
+    });
     const owner = await response.json();
     const owneridData = owner.userid;
     const owneridName = owner.name;
-    console.log("ownerid12", owneridName);
+    console.log("Owner ID:", owneridData, "Owner Name:", owneridName);
     router.push({
       name: "propertyChat",
       params: { propertyid, owneridData, name, contractorid },
     });
   } catch (error) {
-    console.error("Error fetching property owner:", error);
+    console.error("Error initiating chat:", error);
   }
 };
 </script>
@@ -101,3 +95,34 @@ const initiateChat = async (contractorid, name) => {
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 </style>
+
+
+
+
+
+import { createRouter, createWebHistory } from 'vue-router';
+import ContractorsPage from '@/components/ContractorsPage.vue';
+import ChatPage from '@/components/ChatPage.vue'; // Adjust the path as necessary
+
+const routes = [
+  {
+    path: '/chat/:propertyid',
+    name: 'Contractors',
+    component: ContractorsPage,
+    props: true,
+  },
+  {
+    path: '/chat/:propertyid/:owneridData/:name/:contractorid',
+    name: 'propertyChat',
+    component: ChatPage,
+    props: true,
+  },
+  // Other routes...
+];
+
+const router = createRouter({
+  history: createWebHistory(process.env.BASE_URL),
+  routes,
+});
+
+export default router;
